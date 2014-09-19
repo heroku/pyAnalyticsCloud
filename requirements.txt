@@ -1,4 +1,7 @@
-wheel==0.23.0
-sqlalchemy
+SQLAlchemy==0.9.7
+-e git+https://github.com/superfell/Beatbox@396fe9302f9a45c8e6f74de28e0ae8526f7a4369#egg=beatbox-master
+psycopg2==2.5.4
+requests==2.4.1
 salesforce-oauth-request==1.0.6
-psycopg2
+wheel==0.23.0
+wsgiref==0.1.2

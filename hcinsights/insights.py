@@ -1,11 +1,14 @@
 import salesforce_oauth_request
 
 
-class SFSoapConnection():
-    pass
+class SFSoapConnection(object):
+
+    def __init__(sefl, url, access_token, refresh_token):
+        pass
 
 
 def login(username, password, client_id, client_secret, redirect_url):
+    return 'x', 'y', 'z'
     creds = salesforce_oauth_request.login(
         username=username,
         password=password,
@@ -22,9 +25,6 @@ class InsightsUploader(object):
         self.connection = SFSoapConnection(instance_url, access_token, refresh_token)
 
     def upload(self):
-        metadata = importer.metadata_schema()
-        for chunk in self._chunk_data():
-            self.connection.upload_file(chunk)
-
-    def _chunk_data(self):
-        pass
+        metadata = self.importer.metadata_schema()
+        print 'META', metadata
+        records = list(self.importer)

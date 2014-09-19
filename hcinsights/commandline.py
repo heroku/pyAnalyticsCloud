@@ -22,14 +22,14 @@ def main():
     config.read([os.path.expanduser(options.configfile)])
 
     sfcreds = dict(config.items('salesforce'))
-    password = os.environ['HCINSIGHTS_SFDC_PASSWORD']
-    secret = os.environ['HCINSIGHTS_SFDC_SECRET']
+    password = os.environ['HCINSIGHTS_PASSWORD']
     auth_creds = insights.login(sfcreds['username'], password,
-                                sfcreds['client_id'], secret, sfcreds['redirect_url'])
+                                sfcreds['client_id'], sfcreds['client_secret'],
+                                sfcreds['redirect_url'])
 
     for table in args:
         importer = DBImporter(dict(config.items('db')), table)
-        uploader = InsightsUploader(importer, *auth_creds)
+        uploader = insights.InsightsUploader(importer, *auth_creds)
         uploader.upload()
 
 

@@ -1,3 +1,4 @@
 wheel==0.23.0
 sqlalchemy
 salesforce-oauth-request==1.0.6
+psycopg2

@@ -1,21 +1,72 @@
+import json
 from StringIO import StringIO
 
+import beatbox
 import unicodecsv
 
 
 class SFSoapConnection(object):
+    def __init__(self, username, password):
+        self.ns = beatbox._tPartnerNS
+        self.client = beatbox.Client()
+        self.client.serverUrl = '/'.join([svc.serverUrl.rsplit('/', 1)[0], '32.0'])
+        self.client.login(username, password)
 
-    def __init__(sefl, url, access_token, refresh_token):
-        pass
+    def _get_error(self, request):
+        return dict(
+            status_code=str(request[self.ns.errors][self.ns.statusCode]),
+            message=str(request[self.ns.errors][self.ns.message]),
+            request=request)
+
+    def _is_success(self, request):
+        return str(request[self.ns.success]) == 'true'
+
+    def create(self, obj):
+        assert 'type' in obj, 'Must specify object type.'
+        request = self.client.create([obj])
+        if self._is_success(request):
+            return str(request[self.ns.id]), None
+        return None, self._get_error(request)
+
+    def update(self, obj):
+        assert 'Id' in obj, 'Must specify object Id.'
+        request = self.client.update(obj)
+        if self._is_success(request):
+            return str(request[self.ns.id]), None
+        return None, self._get_error(request)
+
+    def delete(self, obj_id):
+        request = self.client.delete(obj_id)
+        if self._is_success(request):
+            return str(request[self.ns.id]), None
+        return None, self._get_error(request)
 
     def start(self, metadata):
-        print 'NEW UPLOAD', metadata
+        self.data_id, error = self.create({
+            'type': 'InsightsExternalData',
+            'EdgemartAlias': edge_alias,
+            'EdgemartContainer': edge_container,
+            'MetadataJson': json.dumps(metadata),
+            'Format': 'CSV',
+            'Operation': 'Overwrite',
+            'Action': 'None'
+        })
 
     def upload(self, data):
-        print 'UPLOADING Records', data.read()
+        part_id, error = self.create({
+            'type': 'InsightsExternalDataPart',
+            'PartNumber': part_index,
+            'InsightsExternalDataId': data_id,
+            'DataFile': data.read()
+        })
+        self.parts.append(part_id)
 
     def complete(self):
-        print 'COMPELTE UPLOAD'
+        update_data_id, error = self.update({
+            'type': 'InsightsExternalData',
+            'Id': self.data_id,
+            'Action': 'Process'
+        })
 
 
 def login(username, password, client_id, client_secret, redirect_url):

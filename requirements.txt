@@ -1,4 +1,7 @@
-wheel==0.23.0
-sqlalchemy==0.9.7
+git+https://github.com/superfell/Beatbox@396fe9302f9a45c8e6f74de28e0ae8526f7a4369#egg=beatbox-master
 psycopg2==2.5.4
+SQLAlchemy==0.9.7
 unicodecsv==0.9.4
+requests==2.4.1
+wheel==0.23.0
+wsgiref==0.1.2

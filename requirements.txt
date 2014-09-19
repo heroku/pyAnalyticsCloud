@@ -1,4 +1,4 @@
 wheel==0.23.0
-sqlalchemy
-salesforce-oauth-request==1.0.6
-psycopg2
+sqlalchemy==0.9.7
+psycopg2==2.5.4
+unicodecsv==0.9.4

@@ -11,7 +11,9 @@ except ImportError:
 readme = open('README.md').read()
 
 requirements = [
-    # TODO: put package requirements here
+    'sqlalchemy',
+    'psycopg2',
+    'unicodecsv'
 ]
 
 test_requirements = [

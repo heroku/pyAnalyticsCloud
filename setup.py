@@ -19,7 +19,7 @@ test_requirements = [
 ]
 
 setup(
-    name='hc-insights',
+    name='hcinsights',
     version='0.1.0',
     description='Load data into Salesforce.com Insights',
     long_description=readme,
@@ -27,14 +27,19 @@ setup(
     author_email='marc@heroku.com',
     url='https://github.com/heroku/hc-insights',
     packages=[
-        'hc-insights',
+        'hcinsights',
     ],
-    package_dir={'hc-insights':
-                 'hc-insights'},
+    package_dir={'hcinsights':
+                 'hcinsights'},
+    entry_points={
+        'console_scripts': [
+            'hc-insights = hcinsights.commandline:main',
+        ],
+    },
     include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
-    keywords='hc-insights',
+    keywords='salesforce, heroku, insights',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

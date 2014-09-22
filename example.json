@@ -1,29 +1,29 @@
 {
-    'salesforce': {
-        'username': 'youremail@example.com',
-        'oauth_clientid': 'XXX1234567889SDFGSDFGKSKFGJSLDFGKJSLDFKGJSLFKSDFGJSKLFGJsdkfgjsldfkgjsldkgj',
-        'oauth_secret': '1234567890',
-        'oauth_redirect': 'http://example.com',
-        'edgemart_alias': 'something',
-        'edgemart_container': 'mycontainer'
+    "salesforce": {
+        "username": "youremail@example.com",
+        "oauth_clientid": "XXX1234567889SDFGSDFGKSKFGJSLDFGKJSLDFKGJSLFKSDFGJSKLFGJsdkfgjsldfkgjsldkgj",
+        "oauth_secret": "1234567890",
+        "oauth_redirect": "http://example.com",
+        "edgemart_alias": "something",
+        "edgemart_container": "mycontainer"
     },
 
-    'db': { 
-        'url': 'postgres://user:password@example.com/database'
+    "db": { 
+        "url": "postgres://user:password@example.com/database"
     },
 
-    'objects': [
+    "objects": [
         { 
-            'table': 'schema.table_name'
+            "table": "schema.table_name"
         },
         { 
-            'table': 'schema.table2'
-            'description': "Verbose table defintion overriding automatic defaults, using Insights External Metadata.",
-            'fullyQualifiedName': 'SalesData',
-            'label': 'Sales Data',
-            'name': 'SalesData',
+            "table": "schema.table2"
+            "description": "Verbose table defintion overriding automatic defaults, using Insights External Metadata.",
+            "fullyQualifiedName": "SalesData",
+            "label": "Sales Data",
+            "name": "SalesData",
 
-            'fields': [
+            "fields": [
                 {
                     "fullyQualifiedName": "SalesData.Name",
                     "label": "Account Name",

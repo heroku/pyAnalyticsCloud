@@ -24,10 +24,6 @@ def main():
     if not password:
         op.error('Please provide your password via environment varibable: HCINSIGHTS_SFDC_PASSWORD')
 
-    auth_creds = insights.login(sfcreds['username'], password,
-                                sfcreds['oauth_clientid'], sfcreds['oauth_secret'],
-                                sfcreds['oauth_redirect'])
-
     connection = insights.SFSoapConnection(sfcreds['username'], password,
             sfcreds['edgemart_alias'], sfcreds['edgemart_container'])
     for obj in config['objects']:

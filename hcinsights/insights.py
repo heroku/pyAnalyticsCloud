@@ -17,7 +17,6 @@ class SFSoapConnection(object):
         self.client.login(username, password)
         self.edge_alias = edge_alias
         self.edge_container = edge_container
-        self.part_index = 0
         self.parts = []
 
     def _get_error(self, request):
@@ -63,10 +62,9 @@ class SFSoapConnection(object):
             raise ConnectionError('Error creating InsightsExternalData object: {}'.format(json.dumps(error)))
 
     def upload(self, data):
-        self.part_index += 1
         part_id, error = self.create({
             'type': 'InsightsExternalDataPart',
-            'PartNumber': self.part_index,
+            'PartNumber': len(self.parts) + 1,
             'InsightsExternalDataId': self.data_id,
             'DataFile': data.read()
         })
@@ -82,19 +80,6 @@ class SFSoapConnection(object):
         })
         if error:
             raise ConnectionError('Error updating InsightsExternalData object: {}'.format(json.dumps(error)))
-
-
-def login(username, password, client_id, client_secret, redirect_url):
-    return range(3)
-
-    creds = salesforce_oauth_request.login(
-        username=username,
-        password=password,
-        client_id=client_id,
-        client_secret=client_secret,
-        redirect_uri=redirect_url)
-
-    return creds['instance_url'], creds['access_token'], creds['refresh_token']
 
 
 class InsightsUploader(object):

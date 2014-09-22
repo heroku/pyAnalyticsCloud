@@ -6,11 +6,15 @@ import unicodecsv
 
 
 class SFSoapConnection(object):
-    def __init__(self, username, password):
+    def __init__(self, username, password, edge_alias, edge_container):
         self.ns = beatbox._tPartnerNS
         self.client = beatbox.Client()
-        self.client.serverUrl = '/'.join([svc.serverUrl.rsplit('/', 1)[0], '32.0'])
+        self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
         self.client.login(username, password)
+        self.edge_alias = edge_alias
+        self.edge_container = edge_container
+        self.part_index = 0
+        self.parts = []
 
     def _get_error(self, request):
         return dict(
@@ -44,8 +48,8 @@ class SFSoapConnection(object):
     def start(self, metadata):
         self.data_id, error = self.create({
             'type': 'InsightsExternalData',
-            'EdgemartAlias': edge_alias,
-            'EdgemartContainer': edge_container,
+            'EdgemartAlias': self.edge_alias,
+            'EdgemartContainer': self.edge_container,
             'MetadataJson': json.dumps(metadata),
             'Format': 'CSV',
             'Operation': 'Overwrite',
@@ -53,10 +57,11 @@ class SFSoapConnection(object):
         })
 
     def upload(self, data):
+        self.part_index += 1
         part_id, error = self.create({
             'type': 'InsightsExternalDataPart',
-            'PartNumber': part_index,
-            'InsightsExternalDataId': data_id,
+            'PartNumber': self.part_index,
+            'InsightsExternalDataId': self.data_id,
             'DataFile': data.read()
         })
         self.parts.append(part_id)
@@ -86,9 +91,9 @@ class InsightsUploader(object):
     MAX_FILE_SIZE = 1 * 1024 * 1024
     MAX_FILE_SIZE = 1024
 
-    def __init__(self, importer, instance_url, access_token, refresh_token):
+    def __init__(self, importer, connection):
         self.importer = importer
-        self.connection = SFSoapConnection(instance_url, access_token, refresh_token)
+        self.connection = connection
         self.metadata = self._metadata()
 
     def _metadata(self):

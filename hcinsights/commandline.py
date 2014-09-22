@@ -29,7 +29,9 @@ def main():
 
     for table in args:
         importer = DBImporter(dict(config.items('db')), table)
-        uploader = insights.InsightsUploader(importer, *auth_creds)
+        connection = insights.SFSoapConnection(sfcreds['username'], password,
+            sfcreds['edgemart_alias'], sfcreds['edgemart_container'])
+        uploader = insights.InsightsUploader(importer, connection)
         uploader.upload()
 
 

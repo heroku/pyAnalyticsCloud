@@ -88,8 +88,7 @@ def login(username, password, client_id, client_secret, redirect_url):
 
 
 class InsightsUploader(object):
-    MAX_FILE_SIZE = 1 * 1024 * 1024
-    MAX_FILE_SIZE = 1024
+    MAX_FILE_SIZE = 10 * 1024 * 1024
 
     def __init__(self, importer, connection):
         self.importer = importer

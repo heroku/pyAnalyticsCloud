@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ConfigParser import ConfigParser
+import json
 import optparse
 import os.path
 
@@ -9,31 +9,32 @@ from importers.db import DBImporter
 
 
 def main():
-    usage = '%prog table [table]'
+    usage = '%prog configfile'
     op = optparse.OptionParser(usage=usage)
 
-    op.add_option('-c', '--configfile', default='~/.hcinsights.ini')
-
     options, args = op.parse_args()
+
     if not args:
-        op.error('need at least one table to upload')
+        op.error('Please provide a run config file')
 
-    config = ConfigParser()
-    config.read([os.path.expanduser(options.configfile)])
+    config = json.load(open(os.path.expanduser(args[0])))
 
-    sfcreds = dict(config.items('salesforce'))
-    password = os.environ['HCINSIGHTS_PASSWORD']
+    sfcreds = config['salesforce']
+    password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
+    if not password:
+        op.error('Please provide your password via environment varibable: HCINSIGHTS_SFDC_PASSWORD')
+
     auth_creds = insights.login(sfcreds['username'], password,
-                                sfcreds['client_id'], sfcreds['client_secret'],
-                                sfcreds['redirect_url'])
+                                sfcreds['oauth_clientid'], sfcreds['oauth_secret'],
+                                sfcreds['oauth_redirect'])
 
-    for table in args:
-        importer = DBImporter(dict(config.items('db')), table)
-        connection = insights.SFSoapConnection(sfcreds['username'], password,
+    connection = insights.SFSoapConnection(sfcreds['username'], password,
             sfcreds['edgemart_alias'], sfcreds['edgemart_container'])
+    for table in config['objects']:
+        importer = DBImporter(config['db'], table['table'])
         uploader = insights.InsightsUploader(importer, connection)
         uploader.upload()
 
 
 if __name__ == '__main__':
-    main()
+    main

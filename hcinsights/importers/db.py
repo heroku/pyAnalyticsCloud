@@ -45,7 +45,7 @@ class DBImporter(object):
         return schema
 
     def _type_kwargs(self, dbtype):
-        if str(dbtype) == 'INTEGER':
+        if str(dbtype) in ('SMALLINT', 'INTEGER'):
             return {
                 'type': 'Numeric',
                 'precision': 0,

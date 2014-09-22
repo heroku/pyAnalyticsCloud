@@ -23,26 +23,41 @@ def scoped_session(*args, **kwargs):
 
 
 class DBImporter(object):
-    def __init__(self, config, table):
-        self.url = config['url']
-        self.engine = create_engine(self.url)
+    def __init__(self, dburl, config):
+        self.config = config
+        self.fields = self.config.pop('fields', {})
+
+
+        table = config['table']
+        self.engine = create_engine(dburl)
         self.connection = self.engine.connect()
         self.metadata = MetaData(bind=self.connection)
         self.metadata.reflect(only=[table])
         self.table = self.metadata.tables[table]
 
-    def metadata_schema(self):
-        fqname = self.table.name
-        api_name = self.table.name.replace(' ', '')
-        display_name = self.table.name
-        schema = metadata_object(fqname, display_name, api_name, fields=[])
+    def object_metadata(self):
+        obj_meta = {
+            'fullyQualifiedName': self.table.name,
+            'name': self.table.name,
+            'label': self.table.name,
+            'fields': []
+        }
+        obj_meta.update(self.config)
+
         for col in self.table.columns:
-            fqname = '{}.{}'.format(self.table.name, col.name)
             api_name = col.name
             display_name = col.name
-            schema['fields'].append(metadata_object(fqname, display_name, api_name,
-                                    **self._type_kwargs(col.type)))
-        return schema
+            field_meta = {
+                'fullyQualifiedName': '{}.{}'.format(self.table.name, col.name),
+                'name': col.name,
+                'label': col.name,
+            }
+            field_meta.update(self._type_kwargs(col.type))
+            if col.name in self.fields:
+                field_meta.update(self.fields[col.name])
+            obj_meta['fields'].append(field_meta)
+
+        return obj_meta
 
     def _type_kwargs(self, dbtype):
         if str(dbtype) in ('SMALLINT', 'INTEGER'):

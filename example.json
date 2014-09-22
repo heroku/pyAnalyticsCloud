@@ -14,17 +14,17 @@
 
     "objects": [
         { 
-            "table": "schema.table_name"
+            "table": "table_name"
         },
         { 
-            "table": "schema.table2"
+            "table": "table2",
             "description": "Verbose table defintion overriding automatic defaults, using Insights External Metadata.",
             "fullyQualifiedName": "SalesData",
             "label": "Sales Data",
             "name": "SalesData",
 
-            "fields": [
-                {
+            "fields": {
+                "columname": {
                     "fullyQualifiedName": "SalesData.Name",
                     "label": "Account Name",
                     "name": "Name",
@@ -39,7 +39,7 @@
                     "scale": null,
                     "format": ""
                 }
-            ]
         }
+    }
     ]
 }

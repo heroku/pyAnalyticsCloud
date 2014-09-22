@@ -107,7 +107,7 @@ class InsightsUploader(object):
             'objects': []
         }
 
-        object_metadata = self.importer.metadata_schema()
+        object_metadata = self.importer.object_metadata()
         object_metadata['connector'] = 'HerokuConnectInsights'
         metadata['objects'].append(object_metadata)
 

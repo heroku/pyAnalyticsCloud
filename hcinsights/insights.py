@@ -5,6 +5,10 @@ import beatbox
 import unicodecsv
 
 
+class ConnectionError(Exception):
+    pass
+
+
 class SFSoapConnection(object):
     def __init__(self, username, password, edge_alias, edge_container):
         self.ns = beatbox._tPartnerNS
@@ -55,6 +59,8 @@ class SFSoapConnection(object):
             'Operation': 'Overwrite',
             'Action': 'None'
         })
+        if error:
+            raise ConnectionError('Error creating InsightsExternalData object: {}'.format(json.dumps(error)))
 
     def upload(self, data):
         self.part_index += 1
@@ -64,6 +70,8 @@ class SFSoapConnection(object):
             'InsightsExternalDataId': self.data_id,
             'DataFile': data.read()
         })
+        if error:
+            raise ConnectionError('Error creating InsightsExternalDataPart object: {}'.format(json.dumps(error)))
         self.parts.append(part_id)
 
     def complete(self):
@@ -72,6 +80,8 @@ class SFSoapConnection(object):
             'Id': self.data_id,
             'Action': 'Process'
         })
+        if error:
+            raise ConnectionError('Error updating InsightsExternalData object: {}'.format(json.dumps(error)))
 
 
 def login(username, password, client_id, client_secret, redirect_url):

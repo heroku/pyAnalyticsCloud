@@ -1,5 +1,6 @@
 import json
 from StringIO import StringIO
+from base64 import b64encode
 
 import beatbox
 import unicodecsv
@@ -53,7 +54,7 @@ class SFSoapConnection(object):
             'type': 'InsightsExternalData',
             'EdgemartAlias': self.edge_alias,
             'EdgemartContainer': self.edge_container,
-            'MetadataJson': metadata,
+            'MetadataJson': b64encode(metadata),
             'Format': 'CSV',
             'Operation': 'Overwrite',
             'Action': 'None'
@@ -66,7 +67,7 @@ class SFSoapConnection(object):
             'type': 'InsightsExternalDataPart',
             'PartNumber': len(self.parts) + 1,
             'InsightsExternalDataId': self.data_id,
-            'DataFile': data.read()
+            'DataFile': b64encode(data.read())
         })
 
         if error:

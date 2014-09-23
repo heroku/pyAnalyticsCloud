@@ -23,12 +23,11 @@ def scoped_session(*args, **kwargs):
 
 
 class DBImporter(object):
-    def __init__(self, config):
+    def __init__(self, config, table):
         self.config = config
         self.engine = create_engine(config['url'])
         self.connection = self.engine.connect()
 
-        table = self.config['table']
         metadata = MetaData(bind=self.connection)
         metadata.reflect(only=[table])
         self.table = metadata.tables[table]

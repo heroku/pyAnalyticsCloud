@@ -1,7 +1,7 @@
 {
     "salesforce": {
         "username": "youremail@example.com",
-        "edgemart_alias": "something",
+        "edgemart_alias": "something"
     },
 
     "db": { 
@@ -11,7 +11,7 @@
     "objects": [
         { "table": "table_name" },
         { "table": "table2_name" },
-        { 
+        {
             "table": "table3_name",
             "description": "Verbose table defintion overriding automatic defaults, using Insights External Metadata.",
             "fullyQualifiedName": "SalesData",

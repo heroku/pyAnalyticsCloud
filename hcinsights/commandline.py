@@ -19,13 +19,12 @@ def main():
 
     config = json.load(open(os.path.expanduser(args[0])))
 
-    sfcreds = config['salesforce']
+    creds = config['salesforce']
     password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
     if not password:
         op.error('Please provide your password via environment variable: HCINSIGHTS_SFDC_PASSWORD')
 
-    connection = insights.SFSoapConnection(sfcreds['username'], password,
-            sfcreds['edgemart_alias'], sfcreds['edgemart_container'])
+    connection = insights.SFSoapConnection(creds['username'], password, creds['edgemart_alias'])
     for obj in config['objects']:
         importer = DBImporter(config['db']['url'], obj)
         uploader = insights.InsightsUploader(importer, connection)

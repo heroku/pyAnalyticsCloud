@@ -11,13 +11,12 @@ class ConnectionError(Exception):
 
 
 class SFSoapConnection(object):
-    def __init__(self, username, password, edge_alias, edge_container):
+    def __init__(self, username, password, edge_alias):
         self.ns = beatbox._tPartnerNS
         self.client = beatbox.Client()
         self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
         self.client.login(username, password)
         self.edge_alias = edge_alias
-        self.edge_container = edge_container
         self.parts = []
 
     def _get_error(self, request):
@@ -53,7 +52,7 @@ class SFSoapConnection(object):
         self.data_id, error = self.create({
             'type': 'InsightsExternalData',
             'EdgemartAlias': self.edge_alias,
-            'EdgemartContainer': self.edge_container,
+            'EdgemartContainer': '',
             'MetadataJson': b64encode(metadata),
             'Format': 'CSV',
             'Operation': 'Overwrite',

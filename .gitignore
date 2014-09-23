@@ -52,3 +52,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+.DS_Store
+node_modules/
+bower_components/
+.sass-cache
+npm-debug.log

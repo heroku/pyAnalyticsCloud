@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql import sqltypes
 from sqlalchemy.orm import sessionmaker
 
-from .base import metadata_object
+from .base import new_field
 
 
 @contextmanager
@@ -27,8 +27,7 @@ class DBImporter(object):
         self.config = config
         self.fields = self.config.pop('fields', {})
 
-
-        table = config['table']
+        table = config.pop('table')
         self.engine = create_engine(dburl)
         self.connection = self.engine.connect()
         self.metadata = MetaData(bind=self.connection)
@@ -47,11 +46,8 @@ class DBImporter(object):
         for col in self.table.columns:
             api_name = col.name
             display_name = col.name
-            field_meta = {
-                'fullyQualifiedName': '{}.{}'.format(self.table.name, col.name),
-                'name': col.name,
-                'label': col.name,
-            }
+            fqname = '{}.{}'.format(self.table.name, col.name)
+            field_meta = new_field(fqname, col.name)
             field_meta.update(self._type_kwargs(col.type))
             if col.name in self.fields:
                 field_meta.update(self.fields[col.name])
@@ -63,9 +59,9 @@ class DBImporter(object):
         if str(dbtype) in ('SMALLINT', 'INTEGER'):
             return {
                 'type': 'Numeric',
-                'precision': 0,
+                'precision': 19,
                 'scale': 0,
-                'format': '0'
+                'defaultValue': 0
             }
 
         if str(dbtype).startswith('VARCHAR'):
@@ -74,7 +70,7 @@ class DBImporter(object):
         if str(dbtype) == 'TIMESTAMP WITHOUT TIME ZONE':
             return {
                 'type': 'Date',
-                'format': 'yyyy-MM-dd HH:mm:ss.SSSZ'
+                'format': 'yyyy-MM-dd HH:mm:ss'
             }
 
         raise TypeError('Unknown Type, {}'.format(dbtype))

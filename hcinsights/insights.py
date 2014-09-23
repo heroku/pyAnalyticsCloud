@@ -105,7 +105,9 @@ class InsightsUploader(object):
         }
 
         object_metadata = self.importer.object_metadata()
-        object_metadata['connector'] = 'HerokuConnectInsights'
+        object_metadata['connector'] = 'HerokuConnectInsightsLoader'
+        object_metadata['rowLevelSecurityFilter'] = None
+        object_metadata['acl'] = None
         metadata['objects'].append(object_metadata)
 
         return metadata

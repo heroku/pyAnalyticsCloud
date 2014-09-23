@@ -6,6 +6,30 @@ def metadata_object(fqname, display_name, api_name, **kwargs):
     return kwargs
 
 
+def new_field(fqname, name, **kwargs):
+    field = {
+        'fullyQualifiedName': fqname,
+        'label': name,
+        'name': name,
+        'description': name,
+        'type': None,
+        'precision': 0,
+        'scale': 0,
+        'defaultValue': "",
+        'format': None,
+        'isSystemField': False,
+        'isUniqueId': False,
+        'isMultiValue': False,
+        'multiValueSeperator': False,
+        'acl': None,
+        'fiscalMonthOffset': 0
+    }
+
+    field.update(kwargs)
+
+    return field
+
+
 def metadata_text_field(fqname, display_name, api_name, **kwargs):
     kwargs['type'] = 'Text'
     return metadata_object(fqname, display_name, api_name, **kwargs)

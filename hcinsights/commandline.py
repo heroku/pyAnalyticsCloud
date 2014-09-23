@@ -22,7 +22,7 @@ def main():
     sfcreds = config['salesforce']
     password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
     if not password:
-        op.error('Please provide your password via environment varibable: HCINSIGHTS_SFDC_PASSWORD')
+        op.error('Please provide your password via environment variable: HCINSIGHTS_SFDC_PASSWORD')
 
     connection = insights.SFSoapConnection(sfcreds['username'], password,
             sfcreds['edgemart_alias'], sfcreds['edgemart_container'])

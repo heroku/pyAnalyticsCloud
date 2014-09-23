@@ -59,7 +59,7 @@ class SFSoapConnection(object):
             'Action': 'None'
         })
         if error:
-            raise ConnectionError('Error creating InsightsExternalData object: {}'.format(json.dumps(error)))
+            raise ConnectionError('creating InsightsExternalData object: {}'.format(error))
 
     def upload(self, data):
         part_id, error = self.create({
@@ -69,7 +69,7 @@ class SFSoapConnection(object):
             'DataFile': data.read()
         })
         if error:
-            raise ConnectionError('Error creating InsightsExternalDataPart object: {}'.format(json.dumps(error)))
+            raise ConnectionError('creating InsightsExternalDataPart object: {}'.format(error))
         self.parts.append(part_id)
 
     def complete(self):
@@ -79,7 +79,7 @@ class SFSoapConnection(object):
             'Action': 'Process'
         })
         if error:
-            raise ConnectionError('Error updating InsightsExternalData object: {}'.format(json.dumps(error)))
+            raise ConnectionError('updating InsightsExternalData object: {}'.format(error))
 
 
 class InsightsUploader(object):
@@ -134,3 +134,38 @@ class InsightsUploader(object):
             self.connection.upload(output)
 
         self.connection.complete()
+
+
+def main():
+    import optparse
+    import os.path
+
+    usage = '%prog edgemart_name metadata.json data.csv'
+
+    op = optparse.OptionParser(usage=usage)
+
+    options, args = op.parse_args()
+
+    try:
+        edgemart = args.pop(0)
+        metadata = args.pop(0)
+        data = args.pop(0)
+    except IndexError:
+        op.error('missing args')
+
+    username = os.environ.get('HCINSIGHTS_SFDC_USERNAME')
+    if not username:
+        op.error('Provide your password via environment variable: HCINSIGHTS_SFDC_USERNAME')
+
+    password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
+    if not password:
+        op.error('Provide your password via environment variable: HCINSIGHTS_SFDC_PASSWORD')
+
+    connection = SFSoapConnection(username, password, edgemart, None)
+    connection.start(open(metadata).read())
+    connection.upload(open(data))
+    connection.complete()
+
+
+if __name__ == '__main__':
+    main()

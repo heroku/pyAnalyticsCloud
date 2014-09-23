@@ -1,11 +1,7 @@
 {
     "salesforce": {
         "username": "youremail@example.com",
-        "oauth_clientid": "XXX1234567889SDFGSDFGKSKFGJSLDFGKJSLDFKGJSLFKSDFGJSKLFGJsdkfgjsldfkgjsldkgj",
-        "oauth_secret": "1234567890",
-        "oauth_redirect": "http://example.com",
         "edgemart_alias": "something",
-        "edgemart_container": "mycontainer"
     },
 
     "db": { 
@@ -13,11 +9,10 @@
     },
 
     "objects": [
+        { "table": "table_name" },
+        { "table": "table2_name" },
         { 
-            "table": "table_name"
-        },
-        { 
-            "table": "table2",
+            "table": "table3_name",
             "description": "Verbose table defintion overriding automatic defaults, using Insights External Metadata.",
             "fullyQualifiedName": "SalesData",
             "label": "Sales Data",

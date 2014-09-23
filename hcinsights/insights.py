@@ -53,7 +53,7 @@ class SFSoapConnection(object):
             'type': 'InsightsExternalData',
             'EdgemartAlias': self.edge_alias,
             'EdgemartContainer': self.edge_container,
-            'MetadataJson': json.dumps(metadata),
+            'MetadataJson': metadata,
             'Format': 'CSV',
             'Operation': 'Overwrite',
             'Action': 'None'
@@ -68,6 +68,7 @@ class SFSoapConnection(object):
             'InsightsExternalDataId': self.data_id,
             'DataFile': data.read()
         })
+
         if error:
             raise ConnectionError('creating InsightsExternalDataPart object: {}'.format(error))
         self.parts.append(part_id)
@@ -112,7 +113,7 @@ class InsightsUploader(object):
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
 
-        self.connection.start(self.metadata)
+        self.connection.start(json.dumps(self.metadata))
         fields = [f['label'] for f in self.metadata['objects'][0]['fields']]
         writer.writerow(fields)
 

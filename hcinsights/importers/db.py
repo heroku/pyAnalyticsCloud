@@ -69,12 +69,12 @@ class DBImporter(object):
             }
 
         if str(dbtype).startswith('VARCHAR'):
-            return {'type': 'String'}
+            return {'type': 'Text'}
 
         if str(dbtype) == 'TIMESTAMP WITHOUT TIME ZONE':
             return {
                 'type': 'Date',
-                'format': 'yyyy-mm-dd HH:MM:SS.mm'
+                'format': 'yyyy-MM-dd HH:mm:ss.SSSZ'
             }
 
         raise TypeError('Unknown Type, {}'.format(dbtype))

@@ -17,18 +17,19 @@ def main():
     if not args:
         op.error('Please provide a run config file')
 
-    config = json.load(open(os.path.expanduser(args[0])))
-
-    creds = config['salesforce']
     password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
     if not password:
         op.error('Please provide your password via environment variable: HCINSIGHTS_SFDC_PASSWORD')
 
+    config = json.load(open(os.path.expanduser(args[0])))
+
+    importer = DBImporter(config['db'])
+
+    creds = config['salesforce']
     connection = insights.SFSoapConnection(creds['username'], password, creds['edgemart_alias'])
-    for obj in config['objects']:
-        importer = DBImporter(config['db']['url'], obj)
-        uploader = insights.InsightsUploader(importer, connection)
-        uploader.upload()
+
+    uploader = insights.InsightsUploader(importer, connection)
+    uploader.upload()
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ class SFSoapConnection(object):
         self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
         self.client.login(username, password)
         self.edge_alias = edge_alias
-        self.parts = []
+        self.parts = None
 
     def _get_error(self, request):
         return dict(
@@ -49,6 +49,7 @@ class SFSoapConnection(object):
         return None, self._get_error(request)
 
     def start(self, metadata):
+        self.parts = []
         self.data_id, error = self.create({
             'type': 'InsightsExternalData',
             'EdgemartAlias': self.edge_alias,

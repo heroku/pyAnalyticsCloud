@@ -21,12 +21,6 @@ db = SQLAlchemy(app)
 # a job is table: { jobid, table, status}
 JOBS = {}
 
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 # api
 @app.route('/api/tables')
 def api_tables():
@@ -78,6 +72,13 @@ def uploads_detail(table):
 @app.route('/static/<path:filename>')
 def download_file(filename):
     return send_from_directory(STATIC_FILES_DIR, filename)
+
+
+# need catch all for React, or have to mirror endpoints
+@app.route('/')
+@app.route('/<path:path>')
+def index(*args, **kwargs):
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

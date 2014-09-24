@@ -11,14 +11,12 @@ class ConnectionError(Exception):
 
 
 class SFSoapConnection(object):
-    def __init__(self, username, password, edge_alias, edge_container):
+    def __init__(self, username, password):
         self.ns = beatbox._tPartnerNS
         self.client = beatbox.Client()
         self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
         self.client.login(username, password)
-        self.edge_alias = edge_alias
-        self.edge_container = edge_container
-        self.parts = []
+        self.parts = None
 
     def _get_error(self, request):
         return dict(
@@ -49,11 +47,12 @@ class SFSoapConnection(object):
             return str(request[self.ns.id]), None
         return None, self._get_error(request)
 
-    def start(self, metadata):
+    def start(self, edgemart, metadata):
+        self.parts = []
         self.data_id, error = self.create({
             'type': 'InsightsExternalData',
-            'EdgemartAlias': self.edge_alias,
-            'EdgemartContainer': self.edge_container,
+            'EdgemartAlias': edgemart,
+            'EdgemartContainer': '',
             'MetadataJson': b64encode(metadata),
             'Format': 'CSV',
             'Operation': 'Overwrite',
@@ -112,11 +111,11 @@ class InsightsUploader(object):
 
         return metadata
 
-    def upload(self):
+    def upload(self, edgemart):
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
 
-        self.connection.start(json.dumps(self.metadata))
+        self.connection.start(edgemart, json.dumps(self.metadata))
         fields = [f['label'] for f in self.metadata['objects'][0]['fields']]
         writer.writerow(fields)
 

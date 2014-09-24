@@ -1,15 +1,25 @@
 import os
 import json
-from flask import (Flask, request, send_from_directory, render_template,
-    make_response)
+
+from flask import Flask, request, send_from_directory, render_template
+from flask import jsonify
+
+from flask.ext.sqlalchemy import SQLAlchemy
 
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_FILES_DIR = os.path.join(PROJECT_ROOT, 'assets', 'public')
 
 
-app = Flask(__name__, static_folder=None)
+app = Flask('hcinsights', static_folder=None)
+
 app.config.update(DEBUG=True, static_folder=None)
+
+app.config.setdefault('SQLALCHEMY_DATABASE_URI', os.environ.get('DATABASE_URL'))
+db = SQLAlchemy(app)
+
+# a job is table: { jobid, table, status}
+JOBS = {}
 
 
 @app.route('/')
@@ -19,12 +29,17 @@ def index():
 
 # api
 @app.route('/api/tables')
-def tables():
-    data = [
-        {'name': 'tablename', 'fields': []},
-    ]
-    resp = make_json_response(data, status=200)
-    return resp
+def api_tables():
+    result = db.engine.execute("""SELECT table_schema as schema, table_name as name
+        FROM information_schema.tables
+        WHERE  table_schema NOT IN ('pg_catalog', 'information_schema')
+            and table_type = 'BASE TABLE'
+            and table_name NOT IN ('_trigger_log', 'c5_versions', '_trigger_last_id')
+        """)
+    tables = result.fetchall()[1:]
+
+    data = [{'name': '{}.{}'.format(*table), 'fields': []} for table in tables]
+    return jsonify(tables=data)
 
 
 @app.route('/api/uploads', methods=['GET', 'POST'])
@@ -33,35 +48,30 @@ def uploads():
     # could also just be dict with tablename:status unless we wanted
     # to provide more meta, like failure messages
     if request.method == 'GET':
-        data = [
-            {'table': 'tablename', 'status': 'WAITING'},
-            {'table': 'tablename', 'status': 'PROCESSING'},
-            {'table': 'tablename', 'status': 'COMPLETE'},
-            {'table': 'tablename', 'status': 'FAILED'}
-        ]
-        resp = make_json_response(data, status=200)
-        return resp
-    elif request.method == 'POST':
-        data = request.json
-        data = {'table': 'tablename', 'username': '', 'password': ''}
-        # Start subprocess ... keep hash of them somewhere
-        # for status updates per-table. Don't need response data, just 200 if good?
-        resp = make_json_response({}, status=200)
-        return resp
+        return jsonify(jobs=JOBS)
+
+    if request.method == 'POST':
+        data = request.json  # username, password, table
+        table = data['table']
+
+        importer = DBImporter(app.config['SQLALCHEMY_DATABASE_URI'], table)
+        connection = SFSoapConnection(data['username'], data['password'])
+        uploader = InsightsUploader(importer, connection)
+        uploader.upload(table)
+
+        job = {'jobid': hash(uploader), 'table': table, status: 'inprogress'}
+        JOBS[table] = job
+
+        # XXX error handling on job setup
+        return jsonify(status=job['status'])
 
 
-@app.route('/api/uploads/<table>', methods=['GET', 'DELETE'])
-def uploads_detail():
+@app.route('/api/uploads/<table>', methods=['GET'])
+def uploads_detail(table):
     if request.method == 'GET':
-        data = {
-            'status': 'COMPLETE'
-        }
-        resp = make_json_response(data, status=200)
-        return resp
-    elif request.method == 'POST':
-        # cancel/remove from in-memory queue?
-        resp = make_json_response({}, status=200)
-        return resp
+        job = JOBS[table]
+
+        return jsonify(status=job['status'])
 
 
 # static files
@@ -70,11 +80,5 @@ def download_file(filename):
     return send_from_directory(STATIC_FILES_DIR, filename)
 
 
-def make_json_response(data, *args, **kwargs):
-    kwargs['content_type'] = 'application/json'
-    resp = make_response(json.dumps(data), *args, **kwargs)
-    return resp
-
-
-if __name__=='__main__':
-  app.run()
+if __name__ == '__main__':
+    app.run()

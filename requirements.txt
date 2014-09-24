@@ -2,10 +2,11 @@ Flask==0.10.1
 Jinja2==2.7.3
 MarkupSafe==0.23
 SQLAlchemy==0.9.7
+Flask-SQLAlchemy==2.0
+
 Werkzeug==0.9.6
 -e git+https://github.com/superfell/Beatbox@396fe9302f9a45c8e6f74de28e0ae8526f7a4369#egg=beatbox-master
 gunicorn==19.1.1
--e git+git@github.com:heroku/hc-insights.git@ee3ada3555a0e0f0626538c4490d95c2baf51f41#egg=hcinsights-master
 itsdangerous==0.24
 psycopg2==2.5.4
 requests==2.4.1

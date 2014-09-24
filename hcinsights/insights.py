@@ -83,44 +83,23 @@ class SFSoapConnection(object):
             raise ConnectionError('updating InsightsExternalData object: {}'.format(error))
 
 
+
 class InsightsUploader(object):
     MAX_FILE_SIZE = 10 * 1024 * 1024
 
-    def __init__(self, importer, connection):
-        self.importer = importer
+    def __init__(self, connection, metadata, data):
         self.connection = connection
-        self.metadata = self._metadata()
-
-    def _metadata(self):
-        metadata = {
-            'fileFormat': {
-                "charsetName": "UTF-8",
-                "fieldsEnclosedBy": "\"",
-                "fieldsDelimitedBy": ",",
-                "linesTerminatedBy": "\n",
-                "numberOfLinesToIgnore": 1,
-            },
-            'objects': []
-        }
-
-        object_metadata = self.importer.object_metadata()
-        object_metadata['connector'] = 'HerokuConnectInsightsLoader'
-        object_metadata['rowLevelSecurityFilter'] = None
-        object_metadata['acl'] = None
-        metadata['objects'].append(object_metadata)
-
-        return metadata
+        self.metadata = metadata
+        self.data = data
 
     def upload(self, edgemart):
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
 
         self.connection.start(edgemart, json.dumps(self.metadata))
-        fields = [f['label'] for f in self.metadata['objects'][0]['fields']]
-        writer.writerow(fields)
 
         biggest_record = 0
-        for record in self.importer:
+        for record in self.data:
             before_write = output.tell()
             writer.writerow(record)
             after_write = output.tell()
@@ -143,7 +122,7 @@ def main():
     import optparse
     import os.path
 
-    usage = '%prog edgemart_name metadata.json data.csv'
+    usage = '%prog edgemart metadata.json data.csv'
 
     op = optparse.OptionParser(usage=usage)
 

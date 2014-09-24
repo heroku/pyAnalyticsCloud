@@ -1,6 +1,8 @@
 hc-insights
 ===========
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/heroku/hc-insights)
+
 Tooling to push data into SFDC Insights
 
 .. image:: https://badge.fury.io/py/hc-insights.png

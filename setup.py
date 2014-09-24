@@ -35,7 +35,10 @@ setup(
                  'hcinsights'},
     entry_points={
         'console_scripts': [
-            'hc-insights = hcinsights.commandline:main',
+            'hci-metadata=hcinsights.commandline:metadata',
+            'hci-upload=hcinsights.commandline:upload',
+            'hci-table=hcinsights.commandline:table',
+            'hci-dump=hcinsights.commandline:dump',
         ],
     },
     include_package_data=True,

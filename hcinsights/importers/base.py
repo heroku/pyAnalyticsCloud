@@ -51,9 +51,27 @@ def metadata_date_field(fqname, display_name, api_name, date_format="yyyy-MM-dd"
     return metadata_object(fqname, display_name, api_name, **kwargs)
 
 
-class DataImporter(object):
-    def metadata_schema(self):
-        """
-            Returns a dict describing an object and its fields
-        """
-        raise NotImplementedError
+def metadata_factory(fqname, name=None):
+    if name is None:
+        name = fqname
+
+    metadata = {
+        'fileFormat': {
+            "charsetName": "UTF-8",
+            "fieldsEnclosedBy": "\"",
+            "fieldsDelimitedBy": ",",
+            "linesTerminatedBy": "\n",
+            "numberOfLinesToIgnore": 1,
+        },
+        'objects': [{
+            'connector': 'HerokuConnectInsightsLoader',
+            'rowLevelSecurityFilter': None,
+            'acl': None,
+            'fullyQualifiedName': fqname,
+            'name': name,
+            'label': name,
+            'fields': []
+        }]
+    }
+
+    return metadata, metadata['objects'][0]['fields']

@@ -5,7 +5,8 @@ var path = require('path'),
     _ = require('lodash');
 
 // gulp reqs.
-var gulp = require('gulp');
+var gulp = require('gulp'),
+    merge = require('merge-stream');
 
 // gulp plugins
 var sass = require('gulp-sass'),
@@ -25,10 +26,8 @@ var browserify = require('browserify');
 // config
 var sources = {
   js: ['public/javascripts/**/*.js', 'public/javascripts/**/*.jsx', '!public/javascripts/build/*.js', '!public/javascripts/vendor/**/*.js'],
-  builtjs: 'public/javascripts/bundle/*.js',
   html: 'public/javascripts/**/*.html',
-  scss: 'public/scss/**/*.scss',
-  stylesheets: 'public/stylesheets/**/*'
+  scss: 'public/scss/**/*.scss'
 };
 
 
@@ -41,6 +40,17 @@ var vendorLibs = ['jquery',
                   'es6-promise',
                   'async'];
 
+
+// bower assets
+gulp.task('asset-refresh', function () {
+  var bs = gulp.src('bower_components/bootstrap-sass-official/assets/fonts/**/*')
+    .pipe(gulp.dest('public/fonts'));
+
+  var flat = gulp.src('bower_components/flat-ui/dist/css/flat-ui.css')
+    .pipe(gulp.dest('public/stylesheets'));
+
+  return merge(bs, flat);
+});
 
 // styles
 gulp.task('sass', function () {
@@ -106,5 +116,5 @@ gulp.task('watch', function () {
 });
 
 
-gulp.task('build', ['vendor.js', 'main.js']);
+gulp.task('build', ['asset-refresh', 'sass', 'vendor.js', 'main.js']);
 gulp.task('default', ['sass', 'vendor.js', 'main.js', 'watch']);

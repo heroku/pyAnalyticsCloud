@@ -12,11 +12,6 @@ app = Flask(__name__, static_folder=None)
 app.config.update(DEBUG=True, static_folder=None)
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
 # api
 @app.route('/api/tables')
 def tables():
@@ -68,6 +63,12 @@ def uploads_detail():
 @app.route('/static/<path:filename>')
 def download_file(filename):
     return send_from_directory(STATIC_FILES_DIR, filename)
+
+
+@app.route('/')
+@app.route('/<path:path>')
+def index(*args, **kwargs):
+    return render_template('index.html')
 
 
 def make_json_response(data, *args, **kwargs):

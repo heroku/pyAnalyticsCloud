@@ -83,7 +83,6 @@ class SFSoapConnection(object):
             raise ConnectionError('updating InsightsExternalData object: {}'.format(error))
 
 
-
 class InsightsUploader(object):
     MAX_FILE_SIZE = 10 * 1024 * 1024
 

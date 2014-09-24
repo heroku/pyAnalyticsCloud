@@ -78,7 +78,7 @@ def upload():
     username, password = get_credencials(op)
 
     metadata = get_arg(op, args, 'missing metadata.json')
-    metadata = open(metadata).read()
+    metadata = json.loads(open(metadata).read())
 
     datafile = get_arg(op, args, 'missing datafile.csv')
 
@@ -103,7 +103,7 @@ def table():
     edgemart = get_arg(op, args, default=table)
 
     connection = insights.SFSoapConnection(username, password)
-    metadata = json.dumps(db.generate_metadata(dburl, table))
+    metadata = db.generate_metadata(dburl, table)
     data = db.data_generator(dburl, table)
 
     uploader = insights.InsightsUploader(connection, metadata, data)

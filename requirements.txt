@@ -1,16 +1,7 @@
-Flask==0.10.1
-Jinja2==2.7.3
-MarkupSafe==0.23
 SQLAlchemy==0.9.7
-Flask-SQLAlchemy==2.0
 
-Werkzeug==0.9.6
 -e git+https://github.com/superfell/Beatbox@396fe9302f9a45c8e6f74de28e0ae8526f7a4369#egg=beatbox-master
-gunicorn==19.1.1
-itsdangerous==0.24
-psycopg2==2.5.4
 requests==2.4.1
-salesforce-oauth-request==1.0.6
 unicodecsv==0.9.4
 wheel==0.23.0
 wsgiref==0.1.2

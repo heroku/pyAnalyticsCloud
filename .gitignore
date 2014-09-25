@@ -2,6 +2,8 @@
 *.json
 *.csv
 
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -56,9 +58,3 @@ docs/_build/
 
 # PyBuilder
 target/
-
-.DS_Store
-node_modules/
-bower_components/
-.sass-cache
-npm-debug.log

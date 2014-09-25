@@ -6,6 +6,9 @@ from flask import jsonify
 
 from flask.ext.sqlalchemy import SQLAlchemy
 
+from hcinsights.importers.db import DBImporter
+from hcinsights.uploader import SFSoapConnection, InsightsUploader
+
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_FILES_DIR = os.path.join(PROJECT_ROOT, 'assets', 'public')
@@ -21,7 +24,7 @@ db = SQLAlchemy(app)
 # a job is table: { jobid, table, status}
 JOBS = {}
 
-# api
+
 @app.route('/api/tables')
 def api_tables():
     result = db.engine.execute("""SELECT table_schema as schema, table_name as name

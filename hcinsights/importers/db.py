@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.sql import sqltypes
 from sqlalchemy.orm import sessionmaker
 
-from .base import new_field, metadata_factory
+from hcinsights.importers.utils import new_field, metadata_factory
 
 
 @contextmanager
@@ -20,6 +20,16 @@ def scoped_session(*args, **kwargs):
         raise
     finally:
         session.close()
+
+
+def db_connect_table(dburl, table):
+    engine = create_engine(dburl)
+    connection = engine.connect()
+    dbmetadata = MetaData(bind=connection)
+    dbmetadata.reflect(only=[table])
+    table = dbmetadata.tables[table]
+
+    return engine, table
 
 
 def metadata_for_dbtype(dbtype):
@@ -53,15 +63,11 @@ def metadata_for_dbtype(dbtype):
     raise TypeError('Unknown Type, {}'.format(dbtype))
 
 
-def generate_metadata(dburl, table, extended=None):
+def metadata_dict(dburl, table, extended=None):
     if extended is None:
         extended = {}
 
-    engine = create_engine(dburl)
-    connection = engine.connect()
-    dbmetadata = MetaData(bind=connection)
-    dbmetadata.reflect(only=[table])
-    table = dbmetadata.tables[table]
+    _, table = db_connect_table(dburl, table)
 
     metadata, fields = metadata_factory(table.name)
     metadata['objects'][0].update(extended)
@@ -80,11 +86,7 @@ def generate_metadata(dburl, table, extended=None):
 
 
 def data_generator(dburl, table):
-    engine = create_engine(dburl)
-    connection = engine.connect()
-    dbmetadata = MetaData(bind=connection)
-    dbmetadata.reflect(only=[table])
-    table = dbmetadata.tables[table]
+    engine, table = db_connect_table(dburl, table)
 
     yield [c.name for c in table.columns]
     with scoped_session(engine) as session:

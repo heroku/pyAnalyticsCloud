@@ -1,9 +1,8 @@
 hc-insights
 ===========
+Tooling to push data into SFDC Insights.
+hc-insights can be used as a set of command line tools to prepare and upload data or as a library.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/heroku/hc-insights)
-
-Tooling to push data into SFDC Insights
 
 .. image:: https://badge.fury.io/py/hc-insights.png
     :target: http://badge.fury.io/py/hc-insights
@@ -15,9 +14,14 @@ Tooling to push data into SFDC Insights
         :target: https://pypi.python.org/pypi/hc-insights
 
 
-* Documentation: https://hc-insights.readthedocs.org.
+The quickest way to get started is to deploy 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/heroku/hc-insights)
 
-Features
+Usage
 --------
 
-* TODO
+hci-table postgres://localhost/dvdrental rental
+ 
+hci-metadata postgres://localhost/dvdrental rental > metadata.json
+hci-dump postgres://localhost/dvdrental rental > data.csv
+hci-upload metadata.json data.csv

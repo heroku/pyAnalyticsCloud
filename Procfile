@@ -1,1 +1,1 @@
-web: python hcinsights/hcinsights.py
+web: python hcinsights/webapp.py

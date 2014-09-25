@@ -6,7 +6,7 @@ from flask import jsonify
 
 from flask.ext.sqlalchemy import SQLAlchemy
 
-from hcinsights.importers.db import DBImporter
+from hcinsights.importers.db import metadata_dict, data_generator
 from hcinsights.uploader import SFSoapConnection, InsightsUploader
 
 
@@ -48,12 +48,15 @@ def uploads():
         return jsonify(jobs=JOBS)
 
     if request.method == 'POST':
-        data = request.json  # username, password, table
-        table = data['table']
+        args = request.json  # username, password, table
+        table = args['table']
 
-        importer = DBImporter(app.config['SQLALCHEMY_DATABASE_URI'], table)
-        connection = SFSoapConnection(data['username'], data['password'])
-        uploader = InsightsUploader(importer, connection)
+        dburl = app.config['SQLALCHEMY_DATABASE_URI']
+        metadata = metadata_dict(dburl, table)
+        data = data_generator(dburl, table)
+
+        connection = SFSoapConnection(args['username'], args['password'])
+        uploader = InsightsUploader(connection, metadata, data)
         uploader.upload(table)
 
         job = {'jobid': hash(uploader), 'table': table, status: 'inprogress'}

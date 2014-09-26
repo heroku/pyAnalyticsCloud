@@ -4,8 +4,8 @@
 
 Heroku Connect Insights Loader
 ====================================
-Tooling to push data into SFDC Insights.
-hc-insights can be used as a set of command line tools to prepare and upload data or as a library.
+Tooling to push data into SFDC Analytics Cloud.
+hc-insights can be either be used as a set of command line tools or as a library.
 
 Usage
 --------
@@ -35,4 +35,4 @@ This can be useful if you want to futher customize the generated metadata to ren
 
 Library
 ---------
-If you need to further customize how the data is prepared prior to upload you can use hc-insights as a library when writing your own import scripts.
+If you need to further customize how the data is prepared prior to upload you can use hc-insights as a library.

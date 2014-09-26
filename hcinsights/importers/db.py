@@ -48,7 +48,7 @@ def db_connect_table(dburl, table, schema='public'):
     connection = engine.connect()
     dbmetadata = MetaData(bind=connection, schema=schema)
     dbmetadata.reflect(only=[table])
-    table = dbmetadata.tables.values()[0]
+    table = dbmetadata.tables['{}.{}'.format(schema, table)]
 
     return engine, table
 

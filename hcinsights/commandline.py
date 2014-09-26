@@ -7,7 +7,7 @@ import sys
 
 import unicodecsv
 
-from hcinsights.uploader import SFSoapConnection, InsightsUploader
+from hcinsights.uploader import InsightsUploader
 from importers import db
 
 
@@ -85,8 +85,8 @@ def upload():
 
     edgemart = get_arg(op, args, default=metadata['objects'][0]['name'])
 
-    connection = SFSoapConnection(username, password)
-    uploader = InsightsUploader(connection, metadata, data)
+    uploader = InsightsUploader(metadata, data)
+    uploader.login(username, password)
     uploader.upload(edgemart)
 
 
@@ -101,11 +101,11 @@ def table():
     table = get_arg(op, args, 'missing table')
     edgemart = get_arg(op, args, default=table)
 
-    connection = SFSoapConnection(username, password)
     metadata = db.metadata_dict(dburl, table)
     data = db.data_generator(dburl, table)
 
-    uploader = InsightsUploader(connection, metadata, data)
+    uploader = InsightsUploader(metadata, data)
+    uploader.login(username, password)
     uploader.upload(edgemart)
 
 

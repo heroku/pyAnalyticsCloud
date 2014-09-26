@@ -10,92 +10,31 @@ class ConnectionError(Exception):
     pass
 
 
-class SFSoapConnection(object):
-    def __init__(self, username, password):
-        self.ns = beatbox._tPartnerNS
-        self.client = beatbox.Client()
-        self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
-        self.client.login(username, password)
-        self.parts = None
-
-    def _get_error(self, request):
-        return dict(
-            status_code=str(request[self.ns.errors][self.ns.statusCode]),
-            message=str(request[self.ns.errors][self.ns.message]),
-            request=request)
-
-    def _is_success(self, request):
-        return str(request[self.ns.success]) == 'true'
-
-    def create(self, obj):
-        assert 'type' in obj, 'Must specify object type.'
-        request = self.client.create([obj])
-        if self._is_success(request):
-            return str(request[self.ns.id]), None
-        return None, self._get_error(request)
-
-    def update(self, obj):
-        assert 'Id' in obj, 'Must specify object Id.'
-        request = self.client.update(obj)
-        if self._is_success(request):
-            return str(request[self.ns.id]), None
-        return None, self._get_error(request)
-
-    def delete(self, obj_id):
-        request = self.client.delete(obj_id)
-        if self._is_success(request):
-            return str(request[self.ns.id]), None
-        return None, self._get_error(request)
-
-    def start(self, edgemart, metadata):
-        self.parts = []
-        self.data_id, error = self.create({
-            'type': 'InsightsExternalData',
-            'EdgemartAlias': edgemart,
-            'EdgemartContainer': '',
-            'MetadataJson': b64encode(metadata),
-            'Format': 'CSV',
-            'Operation': 'Overwrite',
-            'Action': 'None'
-        })
-        if error:
-            raise ConnectionError('creating InsightsExternalData object: {}'.format(error))
-
-    def upload(self, data):
-        part_id, error = self.create({
-            'type': 'InsightsExternalDataPart',
-            'PartNumber': len(self.parts) + 1,
-            'InsightsExternalDataId': self.data_id,
-            'DataFile': b64encode(data.read())
-        })
-
-        if error:
-            raise ConnectionError('creating InsightsExternalDataPart object: {}'.format(error))
-        self.parts.append(part_id)
-
-    def complete(self):
-        update_data_id, error = self.update({
-            'type': 'InsightsExternalData',
-            'Id': self.data_id,
-            'Action': 'Process'
-        })
-        if error:
-            raise ConnectionError('updating InsightsExternalData object: {}'.format(error))
-
-
 class InsightsUploader(object):
     MAX_FILE_SIZE = 10 * 1024 * 1024
 
-    def __init__(self, connection, metadata, data):
-        self.connection = connection
+    def __init__(self, metadata, data):
         self.metadata = metadata
         self.data = data
+
+        self.ns = beatbox._tPartnerNS
+        self.client = beatbox.Client()
+        self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
+        self.parts = None
+
+    def login(self, username, password):
+        self.client.login(username, password)
+
+    def oauth(self, sessionId, serverUrl=None):
+        if serverUrl is None:
+            serverUrl = self.client.serverUrl
+        self.client.useSession(sessionId, serverUrl)
 
     def upload(self, edgemart):
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
 
-        self.connection.start(edgemart, json.dumps(self.metadata))
+        self.start(edgemart, json.dumps(self.metadata))
 
         biggest_record = 0
         for record in self.data:
@@ -107,14 +46,66 @@ class InsightsUploader(object):
 
             if after_write + biggest_record > self.MAX_FILE_SIZE:
                 output.seek(0)
-                self.connection.upload(output)
+                self.add_data(output)
                 output.truncate(0)
 
         if output.tell():
             output.seek(0)
-            self.connection.upload(output)
+            self.add_data(output)
 
-        self.connection.complete()
+        self.complete()
+
+
+    def _get_error(self, response):
+        return dict(
+            status_code=str(response[self.ns.errors][self.ns.statusCode]),
+            message=str(response[self.ns.errors][self.ns.message]),
+            response=response)
+
+    def _is_success(self, response):
+        return str(response[self.ns.success]) == 'true'
+
+    def start(self, edgemart, metadata):
+        self.parts = []
+        response = self.client.create([{
+            'type': 'InsightsExternalData',
+            'EdgemartAlias': edgemart,
+            'EdgemartContainer': '',
+            'MetadataJson': b64encode(metadata),
+            'Format': 'CSV',
+            'Operation': 'Overwrite',
+            'Action': 'None'
+        }])
+
+        if not self._is_success(response):
+            raise ConnectionError(
+                'creating InsightsExternalData object: {}'.format(self._get_error(reponse)))
+
+        self.data_id = str(response[self.ns.id])
+
+    def add_data(self, data):
+        response = self.client.create([{
+            'type': 'InsightsExternalDataPart',
+            'PartNumber': len(self.parts) + 1,
+            'InsightsExternalDataId': self.data_id,
+            'DataFile': b64encode(data.read())
+        }])
+
+        if not self._is_success(response):
+            raise ConnectionError(
+                'creating InsightsExternalDataPart object: {}'.format(self._get_error(response)))
+        self.parts.append(str(response[self.ns.id]))
+
+    def complete(self):
+        response = self.client.update([{
+            'type': 'InsightsExternalData',
+            'Id': self.data_id,
+            'Action': 'Process'
+        }])
+
+        if not self._is_success(response):
+            raise ConnectionError(
+                'updating InsightsExternalData object: {}'.format(self._get_error(response)))
 
 
 def main():

@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import inspect
 import json
 
 from sqlalchemy import create_engine, MetaData
@@ -6,6 +7,26 @@ from sqlalchemy import types as sqltypes
 from sqlalchemy.orm import sessionmaker
 
 from hcinsights.importers.utils import new_field, metadata_factory
+
+
+SQL_TEXT_TYPES = (sqltypes.BOOLEAN, sqltypes.CHAR, sqltypes.BINARY,
+    sqltypes._Binary, sqltypes.VARBINARY, sqltypes.VARCHAR,
+    sqltypes.NCHAR, sqltypes.NVARCHAR, sqltypes.STRINGTYPE, sqltypes.TEXT,)
+
+SQL_NUMERIC_TYPES = (sqltypes.BIGINT, sqltypes.DECIMAL, sqltypes.FLOAT,
+    sqltypes.INT, sqltypes.INTEGER, sqltypes.NUMERIC, sqltypes.Numeric,
+    sqltypes.REAL, sqltypes.SMALLINT,)
+
+SQL_DATE_TYPES = (sqltypes.DATETIME, sqltypes.TIMESTAMP,)
+
+SQL_SUPPORTED_TYPES = SQL_TEXT_TYPES + SQL_NUMERIC_TYPES + SQL_DATE_TYPES
+
+
+def get_base_sqlclass(cls):
+    for c in inspect.getmro(cls):
+        if c in SQL_SUPPORTED_TYPES:
+            return c
+    return None
 
 
 @contextmanager
@@ -33,7 +54,9 @@ def db_connect_table(dburl, table, schema='public'):
 
 
 def metadata_for_dbtype(dbtype):
-    if str(dbtype) in ('SMALLINT', 'INTEGER'):
+    base_type = get_base_sqlclass(dbtype.__class__)
+
+    if base_type in SQL_NUMERIC_TYPES:
         return {
             'type': 'Numeric',
             'precision': 19,
@@ -41,24 +64,20 @@ def metadata_for_dbtype(dbtype):
             'defaultValue': 0
         }
 
-    if str(dbtype).startswith('VARCHAR'):
+    if base_type in SQL_TEXT_TYPES:
         return {'type': 'Text'}
 
-    if str(dbtype) in ('TIMESTAMP WITHOUT TIME ZONE', 'DATE'):
+    if base_type in SQL_DATE_TYPES:
+        # Treat timezones differently?
+        if str(dbtype) == 'TIMESTAMP WITH TIME ZONE':
+            return {
+                'type': 'Date',
+                'format': 'yyyy-MM-dd HH:mm:ss'
+            }
         return {
             'type': 'Date',
             'format': 'yyyy-MM-dd HH:mm:ss'
         }
-
-    if str(dbtype) == 'TIMESTAMP WITH TIME ZONE':
-        return {
-            'type': 'Date',
-            'format': 'yyyy-MM-dd HH:mm:ss'
-        }
-
-    if str(dbtype) == 'BOOLEAN':
-        # XXX better to use numeric?
-        return {'type': 'Text'}
 
     raise TypeError('Unknown Type, {}'.format(dbtype))
 

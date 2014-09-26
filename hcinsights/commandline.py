@@ -11,7 +11,7 @@ from hcinsights.uploader import SFSoapConnection, InsightsUploader
 from importers import db
 
 
-def get_credencials(optionparser):
+def get_credentials(optionparser):
     username = os.environ.get('HCINSIGHTS_SFDC_USERNAME')
     if not username:
         optionparser.error('HCINSIGHTS_SFDC_USERNAME, missing from environment')
@@ -38,7 +38,7 @@ def metadata():
     op = optparse.OptionParser(usage=usage)
 
     opts, args = op.parse_args()
-    username, password = get_credencials(op)
+    username, password = get_credentials(op)
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
     table = get_arg(op, args, 'missing table')
@@ -75,7 +75,7 @@ def upload():
     op = optparse.OptionParser(usage=usage)
 
     options, args = op.parse_args()
-    username, password = get_credencials(op)
+    username, password = get_credentials(op)
 
     metadata = get_arg(op, args, 'missing metadata.json')
     metadata = json.loads(open(metadata).read())
@@ -95,7 +95,7 @@ def table():
     op = optparse.OptionParser(usage=usage)
 
     options, args = op.parse_args()
-    username, password = get_credencials(op)
+    username, password = get_credentials(op)
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
     table = get_arg(op, args, 'missing table')

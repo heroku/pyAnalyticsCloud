@@ -77,7 +77,6 @@ def upload():
     usage = '%prog metadata.json data.csv [edgemart]'
     op = optparse.OptionParser(usage=usage)
     op.add_option('--wsdl', default='wsdl_partner.xml')
-
     options, args = op.parse_args()
     username, password, token = get_credentials(op)
 
@@ -97,7 +96,7 @@ def upload():
 def table():
     usage = '%prog dburl table [edgemart]'
     op = optparse.OptionParser(usage=usage)
-
+    op.add_option('--wsdl', default='wsdl_partner.xml')
     options, args = op.parse_args()
     username, password, token = get_credentials(op)
 
@@ -109,7 +108,7 @@ def table():
     data = db.data_generator(dburl, table)
 
     uploader = InsightsUploader(metadata, data)
-    uploader.login(username, password, token)
+    uploader.login(options.wsdl, username, password, token)
     uploader.upload(edgemart)
 
 

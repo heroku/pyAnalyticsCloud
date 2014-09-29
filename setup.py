@@ -13,7 +13,8 @@ readme = open('README.md').read()
 requirements = [
     'sqlalchemy',
     'psycopg2',
-    'unicodecsv'
+    'unicodecsv',
+    'salesforce-python-toolkit',
 ]
 
 test_requirements = [

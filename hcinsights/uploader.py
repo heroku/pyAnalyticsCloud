@@ -2,7 +2,7 @@ import json
 from StringIO import StringIO
 from base64 import b64encode
 
-import beatbox
+from sforce.partner import SforcePartnerClient
 import unicodecsv
 
 
@@ -13,28 +13,23 @@ class ConnectionError(Exception):
 class InsightsUploader(object):
     MAX_FILE_SIZE = 10 * 1024 * 1024
 
-    def __init__(self, metadata, data):
+    def __init__(self, metadata, data, client=None):
+        # XXX serve via public github? ok to publish?
         self.metadata = metadata
         self.data = data
 
-        self.ns = beatbox._tPartnerNS
-        self.client = beatbox.Client()
-        self.client.serverUrl = '/'.join([self.client.serverUrl.rsplit('/', 1)[0], '32.0'])
+        self.client = client
         self.parts = None
 
-    def login(self, username, password):
-        self.client.login(username, password)
-
-    def oauth(self, sessionId, serverUrl=None):
-        if serverUrl is None:
-            serverUrl = self.client.serverUrl
-        self.client.useSession(sessionId, serverUrl)
+    def login(self, wsdl, username, password, token):
+        self.client = SforcePartnerClient(wsdl)
+        self.client.login(username, password, token)
 
     def upload(self, edgemart):
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
 
-        self.start(edgemart, json.dumps(self.metadata))
+        self.start(edgemart, self.metadata)
 
         biggest_record = 0
         for record in self.data:
@@ -55,57 +50,38 @@ class InsightsUploader(object):
 
         self.complete()
 
-
-    def _get_error(self, response):
-        return dict(
-            status_code=str(response[self.ns.errors][self.ns.statusCode]),
-            message=str(response[self.ns.errors][self.ns.message]),
-            response=response)
-
-    def _is_success(self, response):
-        return str(response[self.ns.success]) == 'true'
-
     def start(self, edgemart, metadata):
         self.parts = []
-        response = self.client.create([{
-            'type': 'InsightsExternalData',
-            'EdgemartAlias': edgemart,
-            'EdgemartContainer': '',
-            'MetadataJson': b64encode(metadata),
-            'Format': 'CSV',
-            'Operation': 'Overwrite',
-            'Action': 'None'
-        }])
+        obj = self.client.generateObject('InsightsExternalData')
+        obj.EdgemartAlias = edgemart
+        obj.EdgemartContainer = ''
+        obj.MetadataJson = b64encode(json.dumps(metadata))
+        obj.Format = 'CSV'
+        obj.Operation = 'Overwrite'
+        obj.Action = None
 
-        if not self._is_success(response):
-            raise ConnectionError(
-                'creating InsightsExternalData object: {}'.format(self._get_error(reponse)))
-
-        self.data_id = str(response[self.ns.id])
+        result = self.client.create(obj)
+        if not result.success:
+            raise ConnectionError('failed to start upload')
+        self.data_id = result.id
 
     def add_data(self, data):
-        response = self.client.create([{
-            'type': 'InsightsExternalDataPart',
-            'PartNumber': len(self.parts) + 1,
-            'InsightsExternalDataId': self.data_id,
-            'DataFile': b64encode(data.read())
-        }])
-
-        if not self._is_success(response):
-            raise ConnectionError(
-                'creating InsightsExternalDataPart object: {}'.format(self._get_error(response)))
-        self.parts.append(str(response[self.ns.id]))
+        obj = self.client.generateObject('InsightsExternalDataPart')
+        obj.PartNumber = len(self.parts) + 1
+        obj.InsightsExternalDataId = self.data_id
+        obj.DataFile = b64encode(data.read())
+        result = self.client.create(obj)
+        if not result.success:
+            raise ConnectionError('failed to upload part')
+        self.parts.append(result)
 
     def complete(self):
-        response = self.client.update([{
-            'type': 'InsightsExternalData',
-            'Id': self.data_id,
-            'Action': 'Process'
-        }])
-
-        if not self._is_success(response):
-            raise ConnectionError(
-                'updating InsightsExternalData object: {}'.format(self._get_error(response)))
+        obj = self.client.generateObject('InsightsExternalData')
+        obj.Id = self.data_id
+        obj.Action = 'Process'
+        result = self.client.update(obj)
+        if not result.success:
+            raise ConnectionError('failed to mark upload complete')
 
 
 def main():

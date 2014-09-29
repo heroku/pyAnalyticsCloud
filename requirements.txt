@@ -1,7 +1,9 @@
+suds==0.3.9
+--allow-external salesforce-python-toolkit
+--allow-unverified salesforce-python-toolkit
+salesforce-python-toolkit==0.1.5
 SQLAlchemy==0.9.7
-
--e git+https://github.com/superfell/Beatbox@396fe9302f9a45c8e6f74de28e0ae8526f7a4369#egg=beatbox-master
-requests==2.4.1
+psycopg2==2.5.4
 unicodecsv==0.9.4
 wheel==0.23.0
 wsgiref==0.1.2

@@ -12,15 +12,19 @@ from importers import db
 
 
 def get_credentials(optionparser):
-    username = os.environ.get('HCINSIGHTS_SFDC_USERNAME')
+    username = os.environ.get('SFDC_USERNAME')
     if not username:
-        optionparser.error('HCINSIGHTS_SFDC_USERNAME, missing from environment')
+        optionparser.error('SFDC_USERNAME, missing from environment')
 
-    password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
+    password = os.environ.get('SFDC_PASSWORD')
     if not password:
-        optionparser.error('HCINSIGHTS_SFDC_PASSWORD, missing from environment')
+        optionparser.error('SFDC_PASSWORD, missing from environment')
 
-    return username, password
+    token = os.environ.get('SFDC_TOKEN')
+    if not token:
+        optionparser.error('SFDC_TOKEN, missing from environment')
+
+    return username, password, token
 
 
 def get_arg(option_parser, args, error_message='', default=None):
@@ -38,7 +42,6 @@ def metadata():
     op = optparse.OptionParser(usage=usage)
 
     opts, args = op.parse_args()
-    username, password = get_credentials(op)
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
     table = get_arg(op, args, 'missing table')
@@ -73,9 +76,10 @@ def dump():
 def upload():
     usage = '%prog metadata.json data.csv [edgemart]'
     op = optparse.OptionParser(usage=usage)
+    op.add_option('--wsdl', default='wsdl_partner.xml')
 
     options, args = op.parse_args()
-    username, password = get_credentials(op)
+    username, password, token = get_credentials(op)
 
     metadata = get_arg(op, args, 'missing metadata.json')
     metadata = json.loads(open(metadata).read())
@@ -86,7 +90,7 @@ def upload():
     edgemart = get_arg(op, args, default=metadata['objects'][0]['name'])
 
     uploader = InsightsUploader(metadata, data)
-    uploader.login(username, password)
+    uploader.login(options.wsdl, username, password, token)
     uploader.upload(edgemart)
 
 
@@ -95,7 +99,7 @@ def table():
     op = optparse.OptionParser(usage=usage)
 
     options, args = op.parse_args()
-    username, password = get_credentials(op)
+    username, password, token = get_credentials(op)
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
     table = get_arg(op, args, 'missing table')
@@ -105,7 +109,7 @@ def table():
     data = db.data_generator(dburl, table)
 
     uploader = InsightsUploader(metadata, data)
-    uploader.login(username, password)
+    uploader.login(username, password, token)
     uploader.upload(edgemart)
 
 

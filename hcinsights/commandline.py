@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import codecs
 import json
 import optparse
 import os.path
@@ -40,15 +41,20 @@ def get_arg(option_parser, args, error_message='', default=None):
 def metadata():
     usage = '%prog dburl table [edgemart]'
     op = optparse.OptionParser(usage=usage)
+    op.add_option('-o', '--output', metavar='FILENAME',
+                  help='output data to FILENAME', default=sys.stdout)
 
     opts, args = op.parse_args()
+
+    if opts.output != sys.stdout:
+        opts.output = open(opts.output, 'w')
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
     table = get_arg(op, args, 'missing table')
 
     metadata = db.metadata_dict(dburl, table)
 
-    print json.dumps(metadata, sort_keys=True, indent=4)
+    json.dump(metadata, opts.output, sort_keys=True, indent=4)
 
 
 def dump():
@@ -56,19 +62,17 @@ def dump():
 
     op = optparse.OptionParser(usage=usage)
     op.add_option('-o', '--output', metavar='FILENAME',
-                  help='output data to FILENAME')
+                  help='output data to FILENAME', default=sys.stdout)
 
     options, args = op.parse_args()
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
     table = get_arg(op, args, 'missing table')
 
-    if options.output:
-        output = open(options.output, 'w')
-    else:
-        output = sys.stdout
+    if options.output != sys.stdout:
+        options.output = open(options.output, 'w', newline='')
 
-    writer = unicodecsv.writer(output, encoding='utf-8')
+    writer = unicodecsv.writer(options.output, encoding='utf-8')
     for record in db.data_generator(dburl, table):
         writer.writerow(record)
 
@@ -81,10 +85,10 @@ def upload():
     username, password, token = get_credentials(op)
 
     metadata = get_arg(op, args, 'missing metadata.json')
-    metadata = json.loads(open(metadata).read())
+    metadata = json.loads(open(metadata, 'r').read())
 
     datafile = get_arg(op, args, 'missing datafile.csv')
-    data = open(datafile).xreadlines()
+    data = unicodecsv.reader(open(datafile))
 
     edgemart = get_arg(op, args, default=metadata['objects'][0]['name'])
 

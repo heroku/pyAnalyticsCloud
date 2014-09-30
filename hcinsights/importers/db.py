@@ -9,15 +9,19 @@ from sqlalchemy.orm import sessionmaker
 from hcinsights.importers.utils import new_field, metadata_factory
 
 
-SQL_TEXT_TYPES = (sqltypes.BOOLEAN, sqltypes.CHAR, sqltypes.BINARY,
+SQL_TEXT_TYPES = (
+    sqltypes.BOOLEAN, sqltypes.CHAR, sqltypes.BINARY,
     sqltypes._Binary, sqltypes.VARBINARY, sqltypes.VARCHAR,
-    sqltypes.NCHAR, sqltypes.NVARCHAR, sqltypes.STRINGTYPE, sqltypes.TEXT,)
+    sqltypes.NCHAR, sqltypes.NVARCHAR, sqltypes.STRINGTYPE, sqltypes.TEXT
+)
 
-SQL_NUMERIC_TYPES = (sqltypes.BIGINT, sqltypes.DECIMAL, sqltypes.FLOAT,
+SQL_NUMERIC_TYPES = (
+    sqltypes.BIGINT, sqltypes.DECIMAL, sqltypes.FLOAT,
     sqltypes.INT, sqltypes.INTEGER, sqltypes.NUMERIC, sqltypes.Numeric,
-    sqltypes.REAL, sqltypes.SMALLINT,)
+    sqltypes.REAL, sqltypes.SMALLINT
+)
 
-SQL_DATE_TYPES = (sqltypes.DATETIME, sqltypes.TIMESTAMP,)
+SQL_DATE_TYPES = (sqltypes.DATETIME, sqltypes.TIMESTAMP, sqltypes.DATE)
 
 SQL_SUPPORTED_TYPES = SQL_TEXT_TYPES + SQL_NUMERIC_TYPES + SQL_DATE_TYPES
 

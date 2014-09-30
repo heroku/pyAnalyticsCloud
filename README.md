@@ -2,10 +2,9 @@
 [![TravisCI](https://travis-ci.org/sibson/hc-insights.png?branch=master)](https://travis-ci.org/sibson/hc-insights)
 [![PyPi](https://pypip.in/d/hc-insights/badge.png)](https://pypi.python.org/pypi/hc-insights)
 
-Heroku Connect Insights Loader
-====================================
-Tooling to push data into SFDC Analytics Cloud.
-hc-insights can be either be used as a set of command line tools or as a library.
+Salesforce.com Analytics Cloud Loader
+======================================
+Tools to help load data into Salesforce.com Analytics Cloud
 
 Usage
 --------

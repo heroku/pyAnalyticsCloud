@@ -1,6 +1,6 @@
-[![Python](https://badge.fury.io/py/hc-insights.png)](http://badge.fury.io/py/hc-insights)
-[![TravisCI](https://travis-ci.org/sibson/hc-insights.png?branch=master)](https://travis-ci.org/sibson/hc-insights)
-[![PyPi](https://pypip.in/d/hc-insights/badge.png)](https://pypi.python.org/pypi/hc-insights)
+[![Python](https://badge.fury.io/py/pyAnalyticsCloud.png)](http://badge.fury.io/py/pyAnalyticsCloud)
+[![TravisCI](https://travis-ci.org/heroku/pyAnalyticsCloud.png?branch=master)](https://travis-ci.org/heroku/pyAnalyticsCloud)
+[![PyPi](https://pypip.in/d/pyAnalyticsCloud/badge.png)](https://pypi.python.org/pypi/pyAnalyticsCloud)
 
 Salesforce.com Analytics Cloud Loader
 ======================================

@@ -22,24 +22,23 @@ test_requirements = [
 ]
 
 setup(
-    name='hcinsights',
+    name='pyAnalyticsCloud',
     version='0.1.0',
-    description='Load data into Salesforce.com Insights',
+    description='Tools to help load data into Salesforce.com Analytics Cloud',
     long_description=readme,
     author='Marc Sibson',
     author_email='marc@heroku.com',
-    url='https://github.com/heroku/hc-insights',
+    url='https://github.com/heroku/pyAnalyticsCloud',
     packages=[
-        'hcinsights',
+        'analyticscloud',
     ],
-    package_dir={'hcinsights':
-                 'hcinsights'},
+    package_dir={'pyAnalyticsCloud': 'analyticscloud'},
     entry_points={
         'console_scripts': [
-            'hci-metadata=hcinsights.commandline:metadata',
-            'hci-upload=hcinsights.commandline:upload',
-            'hci-table=hcinsights.commandline:table',
-            'hci-dump=hcinsights.commandline:dump',
+            'pyac-metadata=analyticscloud.commandline:metadata',
+            'pyac-upload=analyticscloud.commandline:upload',
+            'pyac-table=analyticscloud.commandline:table',
+            'pyac-dump=analyticscloud.commandline:dump',
         ],
     },
     include_package_data=True,

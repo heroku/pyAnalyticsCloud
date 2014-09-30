@@ -10,29 +10,31 @@ hc-insights can be either be used as a set of command line tools or as a library
 Usage
 --------
 First, you will need to set your SFDC credencials via environment variables.
-The password is a combination of your login password and your SFDC token.
 
-    export HCINSIGHTS_SFDC_USERNAME=youruser@example.com
-    export HCINSIGHTS_SFDC_PASSWORD=yourpasswordYOURTOKEN
+    export SFDC_USERNAME=youruser@example.com
+    export SFDC_PASSWORD=yourpassword
+    export SFDC_TOKEN=yourtoken
 
-The quickets way to get started is to load an entire table into SFDC Analytics, Insights
+More information about getting your [Security Token](https://help.salesforce.com/apex/HTViewHelpDoc?id=user_security_token.htm)
 
-    hci-table postgres://username:password@db.example.com/database table_name
+The quickest way to get started is to load an entire table into SFDC Analytics, Insights
 
-Loading data into Insights is basically a three step process.
+    pyac-table postgres://username:password@db.example.com/database table_name
 
-  1. generate a CSV file with your data
-  2. generate a JSON file containing metadata describing your data
-  3. upload the metadata and data to insights
+This command will execute the following three step process.
 
-hc-insights provides a CLI to help with each stage
+  1. generate a JSON file containing metadata describing your data
+  2. generate a CSV file with your data
+  3. upload the metadata and data to Analytics Cloud
 
-    hci-dump postgres://username:password@db.example.com/database table_name > data.csv
-    hci-metadata postgres://username:password@db.example.com/database table_name > metadata.json
-    hci-upload metadata.json data.csv
+pyAnalyticsCloud also provides commands help with each step, this allows you to customize your data before upload
 
-This can be useful if you want to futher customize the generated metadata to rename field or provide richer descriptions
+    pyac-metadata postgres://username:password@db.example.com/database table_name -o metadata.json
+    pyac-dump postgres://username:password@db.example.com/database table_name -o data.csv
+    pyac-upload metadata.json data.csv
+
+Rather than manually editing the datafiles, you may want to simply create a new DB table that is populated with your data and use pyac-table.
 
 Library
 ---------
-If you need to further customize how the data is prepared prior to upload you can use hc-insights as a library.
+If you want to develop more advanced workflows you can use pyAnalyticsCloud as a library for a Python application.

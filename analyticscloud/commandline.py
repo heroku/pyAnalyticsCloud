@@ -8,7 +8,7 @@ import sys
 
 import unicodecsv
 
-from hcinsights.uploader import InsightsUploader
+from analyticscloud.uploader import AnalyticsCloudUploader
 from importers import db
 
 
@@ -92,7 +92,7 @@ def upload():
 
     edgemart = get_arg(op, args, default=metadata['objects'][0]['name'])
 
-    uploader = InsightsUploader(metadata, data)
+    uploader = AnalyticsCloudUploader(metadata, data)
     uploader.login(options.wsdl, username, password, token)
     uploader.upload(edgemart)
 
@@ -111,7 +111,7 @@ def table():
     metadata = db.metadata_dict(dburl, table)
     data = db.data_generator(dburl, table)
 
-    uploader = InsightsUploader(metadata, data)
+    uploader = AnalyticsCloudUploader(metadata, data)
     uploader.login(options.wsdl, username, password, token)
     uploader.upload(edgemart)
 

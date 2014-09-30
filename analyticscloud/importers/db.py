@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy import types as sqltypes
 from sqlalchemy.orm import sessionmaker
 
-from hcinsights.importers.utils import new_field, metadata_factory
+from analyticscloud.importers.utils import new_field, metadata_factory
 
 
 SQL_TEXT_TYPES = (

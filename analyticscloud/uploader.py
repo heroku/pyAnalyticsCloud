@@ -10,7 +10,7 @@ class ConnectionError(Exception):
     pass
 
 
-class InsightsUploader(object):
+class AnalyticsCloudUploader(object):
     MAX_FILE_SIZE = 10 * 1024 * 1024
 
     def __init__(self, metadata, data, client=None):
@@ -82,38 +82,3 @@ class InsightsUploader(object):
         result = self.client.update(obj)
         if not result.success:
             raise ConnectionError(result)
-
-
-def main():
-    import optparse
-    import os.path
-
-    usage = '%prog edgemart metadata.json data.csv'
-
-    op = optparse.OptionParser(usage=usage)
-
-    options, args = op.parse_args()
-
-    try:
-        edgemart = args.pop(0)
-        metadata = args.pop(0)
-        data = args.pop(0)
-    except IndexError:
-        op.error('missing args')
-
-    username = os.environ.get('HCINSIGHTS_SFDC_USERNAME')
-    if not username:
-        op.error('Provide your password via environment variable: HCINSIGHTS_SFDC_USERNAME')
-
-    password = os.environ.get('HCINSIGHTS_SFDC_PASSWORD')
-    if not password:
-        op.error('Provide your password via environment variable: HCINSIGHTS_SFDC_PASSWORD')
-
-    connection = SFSoapConnection(username, password, edgemart, None)
-    connection.start(open(metadata).read())
-    connection.upload(open(data))
-    connection.complete()
-
-
-if __name__ == '__main__':
-    main()

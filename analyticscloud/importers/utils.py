@@ -64,7 +64,7 @@ def metadata_factory(fqname, name=None):
             "numberOfLinesToIgnore": 1,
         },
         'objects': [{
-            'connector': 'HerokuConnectInsightsLoader',
+            'connector': 'HerokuConnectAnalyticsCloudUploader',
             'rowLevelSecurityFilter': None,
             'acl': None,
             'fullyQualifiedName': fqname,

@@ -29,10 +29,7 @@ setup(
     author='Marc Sibson',
     author_email='marc@heroku.com',
     url='https://github.com/heroku/pyAnalyticsCloud',
-    packages=[
-        'analyticscloud',
-    ],
-    package_dir={'pyAnalyticsCloud': 'analyticscloud'},
+    packages=[ 'analyticscloud', 'analyticscloud.importers'],
     entry_points={
         'console_scripts': [
             'pyac-metadata=analyticscloud.commandline:metadata',

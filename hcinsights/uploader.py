@@ -62,7 +62,7 @@ class InsightsUploader(object):
 
         result = self.client.create(obj)
         if not result.success:
-            raise ConnectionError('failed to start upload')
+            raise ConnectionError(result)
         self.data_id = result.id
 
     def add_data(self, data):
@@ -72,7 +72,7 @@ class InsightsUploader(object):
         obj.DataFile = b64encode(data.read())
         result = self.client.create(obj)
         if not result.success:
-            raise ConnectionError('failed to upload part')
+            raise ConnectionError(result)
         self.parts.append(result)
 
     def complete(self):
@@ -81,7 +81,7 @@ class InsightsUploader(object):
         obj.Action = 'Process'
         result = self.client.update(obj)
         if not result.success:
-            raise ConnectionError('failed to mark upload complete')
+            raise ConnectionError(result)
 
 
 def main():

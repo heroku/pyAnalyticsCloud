@@ -8,7 +8,7 @@ except ImportError:
     from distutils.core import setup
 
 
-readme = open('README.md').read()
+README = ''.join(open('README.md').readlines()[4:])
 
 requirements = [
     'sqlalchemy',
@@ -23,13 +23,13 @@ test_requirements = [
 
 setup(
     name='pyAnalyticsCloud',
-    version='0.1.0',
+    version='0.1.1',
     description='Tools to help load data into Salesforce.com Analytics Cloud',
-    long_description=readme,
+    long_description=README,
     author='Marc Sibson',
     author_email='marc@heroku.com',
     url='https://github.com/heroku/pyAnalyticsCloud',
-    packages=[ 'analyticscloud', 'analyticscloud.importers'],
+    packages=['analyticscloud', 'analyticscloud.importers'],
     entry_points={
         'console_scripts': [
             'pyac-metadata=analyticscloud.commandline:metadata',

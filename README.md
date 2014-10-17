@@ -8,7 +8,7 @@ Tools to help load data into Salesforce.com Analytics Cloud
 
 Usage
 --------
-First, you will need to set your SFDC credencials via environment variables.
+First, you will need to set your SFDC credencials via environment variables::
 
     export SFDC_USERNAME=youruser@example.com
     export SFDC_PASSWORD=yourpassword
@@ -26,7 +26,7 @@ This command will execute the following three step process.
   2. generate a CSV file with your data
   3. upload the metadata and data to Analytics Cloud
 
-pyAnalyticsCloud also provides commands help with each step, this allows you to customize your data before upload
+pyAnalyticsCloud also provides commands help with each step, this allows you to customize your data before upload::
 
     pyac-metadata postgres://username:password@db.example.com/database table_name -o metadata.json
     pyac-dump postgres://username:password@db.example.com/database table_name -o data.csv

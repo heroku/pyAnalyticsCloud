@@ -5,6 +5,7 @@ import json
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import types as sqltypes
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.dialects import postgresql
 
 from analyticscloud.importers.utils import new_field, metadata_factory
 
@@ -12,7 +13,8 @@ from analyticscloud.importers.utils import new_field, metadata_factory
 SQL_TEXT_TYPES = (
     sqltypes.BOOLEAN, sqltypes.CHAR, sqltypes.BINARY,
     sqltypes._Binary, sqltypes.VARBINARY, sqltypes.VARCHAR,
-    sqltypes.NCHAR, sqltypes.NVARCHAR, sqltypes.STRINGTYPE, sqltypes.TEXT
+    sqltypes.NCHAR, sqltypes.NVARCHAR, sqltypes.STRINGTYPE, sqltypes.TEXT,
+    postgresql.UUID
 )
 
 SQL_NUMERIC_TYPES = (

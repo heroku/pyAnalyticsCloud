@@ -116,6 +116,5 @@ def data_generator(dburl, table, schema='public'):
     yield [c.name for c in table.columns]
     with scoped_session(engine) as session:
         query = session.query(table).yield_per(1000)
-        for rows in query:
-            for row in rows:
-                yield row
+        for row in query:
+            yield row

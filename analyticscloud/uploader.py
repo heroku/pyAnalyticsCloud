@@ -1,9 +1,13 @@
-import json
-from StringIO import StringIO
 from base64 import b64encode
+import json
+import logging
+from StringIO import StringIO
 
 from sforce.partner import SforcePartnerClient
 import unicodecsv
+
+
+log = logging.getLogger('analyticscloud.uploader')
 
 
 class ConnectionError(Exception):
@@ -51,6 +55,7 @@ class AnalyticsCloudUploader(object):
         self.complete()
 
     def start(self, edgemart, metadata):
+        log.info('starting upload %s', edgemart)
         self.parts = []
         obj = self.client.generateObject('InsightsExternalData')
         obj.EdgemartAlias = edgemart
@@ -66,6 +71,7 @@ class AnalyticsCloudUploader(object):
         self.data_id = result.id
 
     def add_data(self, data):
+        log.info('uploading chunk')
         obj = self.client.generateObject('InsightsExternalDataPart')
         obj.PartNumber = len(self.parts) + 1
         obj.InsightsExternalDataId = self.data_id
@@ -76,6 +82,7 @@ class AnalyticsCloudUploader(object):
         self.parts.append(result)
 
     def complete(self):
+        log.info('upload complete')
         obj = self.client.generateObject('InsightsExternalData')
         obj.Id = self.data_id
         obj.Action = 'Process'

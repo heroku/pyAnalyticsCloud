@@ -14,7 +14,7 @@ SQL_TEXT_TYPES = (
     sqltypes.BOOLEAN, sqltypes.CHAR, sqltypes.BINARY,
     sqltypes._Binary, sqltypes.VARBINARY, sqltypes.VARCHAR,
     sqltypes.NCHAR, sqltypes.NVARCHAR, sqltypes.STRINGTYPE, sqltypes.TEXT,
-    postgresql.UUID
+    postgresql.UUID, postgresql.ENUM
 )
 
 SQL_NUMERIC_TYPES = (
@@ -85,7 +85,7 @@ def metadata_for_dbtype(dbtype):
             'format': 'yyyy-MM-dd HH:mm:ss'
         }
 
-    raise TypeError('Unknown Type, {}'.format(dbtype))
+    raise TypeError('Unknown Type, {} {}'.format(repr(dbtype), dbtype))
 
 
 def metadata_dict(dburl, table, extended=None, schema='public'):

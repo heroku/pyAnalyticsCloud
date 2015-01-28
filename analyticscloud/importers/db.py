@@ -25,7 +25,7 @@ SQL_NUMERIC_TYPES = (
 
 SQL_DATE_TYPES = (sqltypes.DATETIME, sqltypes.TIMESTAMP, sqltypes.DATE)
 
-SQL_SUPPORTED_TYPES = SQL_TEXT_TYPES + SQL_NUMERIC_TYPES + SQL_DATE_TYPES
+SQL_SUPPORTED_TYPES = SQL_NUMERIC_TYPES + SQL_DATE_TYPES
 
 
 def get_base_sqlclass(cls):
@@ -70,9 +70,6 @@ def metadata_for_dbtype(dbtype):
             'defaultValue': 0
         }
 
-    if base_type in SQL_TEXT_TYPES:
-        return {'type': 'Text'}
-
     if base_type in SQL_DATE_TYPES:
         # Treat timezones differently?
         if str(dbtype) == 'TIMESTAMP WITH TIME ZONE':
@@ -85,7 +82,7 @@ def metadata_for_dbtype(dbtype):
             'format': 'yyyy-MM-dd HH:mm:ss'
         }
 
-    raise TypeError('Unknown Type, {} {}'.format(repr(dbtype), dbtype))
+    return {'type': 'Text'}
 
 
 def metadata_dict(dburl, table, extended=None, schema='public'):

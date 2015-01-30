@@ -38,6 +38,16 @@ def get_arg(option_parser, args, error_message='', default=None):
         option_parser.error(error_message)
 
 
+def get_schema_table(option_parser, args):
+    table = get_arg(option_parser, args, 'missing table')
+    try:
+        schema, table = table.split('.')
+    except ValueError:
+        schema = 'public'
+
+    return schema, table
+
+
 def metadata():
     usage = '%prog dburl table [edgemart]'
     op = optparse.OptionParser(usage=usage)
@@ -50,9 +60,8 @@ def metadata():
         opts.output = open(opts.output, 'w')
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
-    table = get_arg(op, args, 'missing table')
-
-    metadata = db.metadata_dict(dburl, table)
+    schema, table = get_schema_table(op, args)
+    metadata = db.metadata_dict(dburl, table, schema=schema)
 
     json.dump(metadata, opts.output, sort_keys=True, indent=4)
 
@@ -67,13 +76,13 @@ def dump():
     options, args = op.parse_args()
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
-    table = get_arg(op, args, 'missing table')
+    schema, table = get_schema_table(op, args)
 
     if options.output != sys.stdout:
         options.output = open(options.output, 'w', newline='')
 
     writer = unicodecsv.writer(options.output, encoding='utf-8')
-    for record in db.data_generator(dburl, table):
+    for record in db.data_generator(dburl, table, schema=schema):
         writer.writerow(record)
 
 
@@ -105,11 +114,11 @@ def table():
     username, password, token = get_credentials(op)
 
     dburl = get_arg(op, args, 'missing dburl, [postgres://username:password@localhost/database]')
-    table = get_arg(op, args, 'missing table')
+    schema, table = get_schema_table(op, args)
     edgemart = get_arg(op, args, default=table)
 
-    metadata = db.metadata_dict(dburl, table)
-    data = db.data_generator(dburl, table)
+    metadata = db.metadata_dict(dburl, table, schema=schema)
+    data = db.data_generator(dburl, table, schema=schema)
 
     uploader = AnalyticsCloudUploader(metadata, data)
     uploader.login(options.wsdl, username, password, token)

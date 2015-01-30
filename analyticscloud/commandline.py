@@ -72,6 +72,8 @@ def dump():
     op = optparse.OptionParser(usage=usage)
     op.add_option('-o', '--output', metavar='FILENAME',
                   help='output data to FILENAME', default=sys.stdout)
+    op.add_option('-l', '--limit', metavar='COUNT', type='int',
+                  help='limit dump to COUNT records')
 
     options, args = op.parse_args()
 
@@ -84,6 +86,10 @@ def dump():
     writer = unicodecsv.writer(options.output, encoding='utf-8')
     for record in db.data_generator(dburl, table, schema=schema):
         writer.writerow(record)
+        if options.limit is not None:
+            options.limit -= 1
+            if options.limit <= 0:
+                break
 
 
 def upload():

@@ -36,6 +36,7 @@ setup(
             'pyac-upload=analyticscloud.commandline:upload',
             'pyac-table=analyticscloud.commandline:table',
             'pyac-dump=analyticscloud.commandline:dump',
+            'pyac-chunk=analyticscloud.commandline:chunk',
         ],
     },
     include_package_data=True,

@@ -8,7 +8,7 @@ import sys
 
 import unicodecsv
 
-from analyticscloud.uploader import AnalyticsCloudUploader
+from analyticscloud.uploader import AnalyticsCloudUploader, DataFileChunker
 from importers import db
 
 
@@ -123,6 +123,20 @@ def table():
     uploader = AnalyticsCloudUploader(metadata, data)
     uploader.login(options.wsdl, username, password, token)
     uploader.upload(edgemart)
+
+
+def chunk():
+    usage = '%prog data.csv'
+    op = optparse.OptionParser(usage=usage)
+    op.add_option('-o', '--output', metavar='FILENAME',
+                  help='output data to FILENAME', default=sys.stdout)
+    op.add_option('-r', '--readable', action='store_true')
+
+    options, args = op.parse_args()
+
+    datafile = get_arg(op, args, 'missing csv file')
+    chunker = DataFileChunker(datafile, encode=not options.readable)
+    chunker.upload(os.path.basename(datafile))
 
 
 if __name__ == '__main__':

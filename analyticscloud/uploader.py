@@ -1,6 +1,7 @@
-from base64 import b64encode
 import json
 import logging
+import os.path
+from base64 import b64encode
 from StringIO import StringIO
 
 from sforce.partner import SforcePartnerClient
@@ -89,3 +90,28 @@ class AnalyticsCloudUploader(object):
         result = self.client.update(obj)
         if not result.success:
             raise ConnectionError(result)
+
+
+class DataFileChunker(AnalyticsCloudUploader):
+    metadata = None
+
+    def __init__(self, datafile, encode=True):
+        self.datafile = datafile
+        self.encode = encode
+        self.output_format = os.path.splitext(os.path.basename(datafile))[0] + '-{:0>3d}.csv'
+        self.parts = []
+
+    def start(self, edgemart, metadata):
+        self.data = unicodecsv.reader(open(self.datafile))
+
+    def add_data(self, data):
+        with (open(self.output_format.format(len(self.parts) + 1), 'w')) as output:
+            if self.encode:
+                data = b64encode(data.read())
+            else:
+                data = data.read()
+            result = output.write(data)
+        self.parts.append(result)
+
+    def complete(self):
+        return

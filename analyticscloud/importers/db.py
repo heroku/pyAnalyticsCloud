@@ -65,7 +65,7 @@ def metadata_for_dbtype(dbtype):
     if base_type in SQL_NUMERIC_TYPES:
         return {
             'type': 'Numeric',
-            'precision': 19,
+            'precision': 18,
             'scale': 0,
             'defaultValue': 0
         }

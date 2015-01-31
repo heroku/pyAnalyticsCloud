@@ -8,7 +8,7 @@ import sys
 
 import unicodecsv
 
-from analyticscloud.uploader import AnalyticsCloudUploader, DataFileChunker
+from analyticscloud.uploader import AnalyticsCloudUploader, DataFileChunker, AnalyticsWriter
 from importers import db
 
 
@@ -83,7 +83,7 @@ def dump():
     if options.output != sys.stdout:
         options.output = open(options.output, 'w', newline='')
 
-    writer = unicodecsv.writer(options.output, encoding='utf-8')
+    writer = AnalyticsWriter(options.output, encoding='utf-8')
     for record in db.data_generator(dburl, table, schema=schema):
         writer.writerow(record)
         if options.limit is not None:

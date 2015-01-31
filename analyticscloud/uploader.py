@@ -1,6 +1,9 @@
+import csv
 import json
 import logging
 import os.path
+from datetime import datetime
+
 from base64 import b64encode
 from StringIO import StringIO
 
@@ -9,6 +12,27 @@ import unicodecsv
 
 
 log = logging.getLogger('analyticscloud.uploader')
+
+
+def _stringify(s, encoding, errors):
+    # customize the date
+    if isinstance(s, datetime):
+        return s.strftime('%Y-%m-%d %H:%M:%S')
+
+    return unicodecsv._stringify(s, encoding, errors)
+
+
+def _stringify_list(l, encoding, errors='strict'):
+    try:
+        return [_stringify(s, encoding, errors) for s in iter(l)]
+    except TypeError as e:
+        raise csv.Error(str(e))
+
+
+class AnalyticsWriter(unicodecsv.UnicodeWriter):
+    def writerow(self, row):
+        # override writerow so we can properly serialize dates
+        return self.writer.writerow(_stringify_list(row, self.encoding, self.encoding_errors))
 
 
 class ConnectionError(Exception):
@@ -32,7 +56,7 @@ class AnalyticsCloudUploader(object):
 
     def upload(self, edgemart):
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = AnalyticsWriter(output, encoding='utf-8')
 
         self.start(edgemart, self.metadata)
 

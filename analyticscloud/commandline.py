@@ -12,6 +12,9 @@ from analyticscloud.uploader import AnalyticsCloudUploader, DataFileChunker, Ana
 from importers import db
 
 
+WSDL = os.path.join(os.path.dirname(__file__), 'wsdl_partner.xml')
+
+
 def get_credentials(optionparser):
     username = os.environ.get('SFDC_USERNAME')
     if not username:
@@ -95,7 +98,7 @@ def dump():
 def upload():
     usage = '%prog metadata.json data.csv [edgemart]'
     op = optparse.OptionParser(usage=usage)
-    op.add_option('--wsdl', default='wsdl_partner.xml')
+    op.add_option('--wsdl', default=WSDL)
     options, args = op.parse_args()
     username, password, token = get_credentials(op)
 

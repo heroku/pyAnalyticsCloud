@@ -19,12 +19,11 @@ SQL_TEXT_TYPES = (
 
 SQL_NUMERIC_TYPES = (
     sqltypes.BIGINT, sqltypes.DECIMAL, sqltypes.FLOAT,
-    sqltypes.INT, sqltypes.INTEGER, sqltypes.NUMERIC, sqltypes.Numeric,
+    sqltypes.INT, sqltypes.INTEGER, sqltypes.NUMERIC,
     sqltypes.REAL, sqltypes.SMALLINT
 )
 
-SQL_FLOAT_TYPES = (sqltypes.NUMERIC, sqltypes.Numeric, sqltypes.DECIMAL,
-                  sqltypes.FLOAT,)
+SQL_FLOAT_TYPES = (sqltypes.NUMERIC, sqltypes.DECIMAL, sqltypes.FLOAT,)
 
 SQL_DATE_TYPES = (sqltypes.DATETIME, sqltypes.TIMESTAMP, sqltypes.DATE)
 

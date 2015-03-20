@@ -19,9 +19,11 @@ SQL_TEXT_TYPES = (
 
 SQL_NUMERIC_TYPES = (
     sqltypes.BIGINT, sqltypes.DECIMAL, sqltypes.FLOAT,
-    sqltypes.INT, sqltypes.INTEGER, sqltypes.NUMERIC, sqltypes.Numeric,
+    sqltypes.INT, sqltypes.INTEGER, sqltypes.NUMERIC,
     sqltypes.REAL, sqltypes.SMALLINT
 )
+
+SQL_FLOAT_TYPES = (sqltypes.NUMERIC, sqltypes.DECIMAL, sqltypes.FLOAT,)
 
 SQL_DATE_TYPES = (sqltypes.DATETIME, sqltypes.TIMESTAMP, sqltypes.DATE)
 
@@ -63,12 +65,18 @@ def metadata_for_dbtype(dbtype):
     base_type = get_base_sqlclass(dbtype.__class__)
 
     if base_type in SQL_NUMERIC_TYPES:
-        return {
+        meta = {
             'type': 'Numeric',
             'precision': 18,
             'scale': 0,
             'defaultValue': 0
         }
+        if base_type in SQL_FLOAT_TYPES:
+            if dbtype.precision is not None:
+                meta['precision'] = min([dbtype.precision, 18])
+            if dbtype.scale is not None:
+                meta['scale'] = min([dbtype.scale, meta['precision'] - 1])
+        return meta
 
     if base_type in SQL_DATE_TYPES:
         # Treat timezones differently?

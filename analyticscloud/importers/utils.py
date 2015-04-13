@@ -77,5 +77,7 @@ def metadata_factory(fqname, name=None):
     return metadata, metadata['objects'][0]['fields']
 
 
-def exclude_columns(table_columns, excludes):
+def exclude_columns(table_columns, excludes=None):
+    if excludes is None:
+        return table_columns
     return [col for col in table_columns if col.name not in excludes]

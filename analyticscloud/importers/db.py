@@ -102,7 +102,7 @@ def metadata_dict(dburl, table, extended=None, excludes=None, schema='public'):
     metadata, fields = metadata_factory(table.name)
     metadata['objects'][0].update(extended)
 
-    columns = table.columns if excludes is None else exclude_columns(table.columns, excludes)
+    columns = exclude_columns(table.columns, excludes)
 
     for col in columns:
         fqname = '{}.{}'.format(table.name, col.name)
@@ -119,15 +119,10 @@ def metadata_dict(dburl, table, extended=None, excludes=None, schema='public'):
 def data_generator(dburl, table, excludes=None, schema='public'):
     engine, table = db_connect_table(dburl, table, schema=schema)
 
-    if excludes is None:
-        columns = table.columns
-        query_args = [table]
-    else:
-        columns = exclude_columns(table.columns, excludes)
-        query_args = columns
+    columns = exclude_columns(table.columns, excludes)
 
     yield [c.name for c in columns]
     with scoped_session(engine) as session:
-        query = session.query(*query_args).yield_per(1000)
+        query = session.query(*columns).yield_per(1000)
         for row in query:
             yield row

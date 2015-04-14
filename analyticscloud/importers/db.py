@@ -7,7 +7,7 @@ from sqlalchemy import types as sqltypes
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.dialects import postgresql
 
-from analyticscloud.importers.utils import new_field, metadata_factory
+from analyticscloud.importers.utils import new_field, metadata_factory, exclude_columns
 
 
 SQL_TEXT_TYPES = (
@@ -93,7 +93,7 @@ def metadata_for_dbtype(dbtype):
     return {'type': 'Text'}
 
 
-def metadata_dict(dburl, table, extended=None, schema='public'):
+def metadata_dict(dburl, table, extended=None, excludes=None, schema='public'):
     if extended is None:
         extended = {}
 
@@ -101,9 +101,10 @@ def metadata_dict(dburl, table, extended=None, schema='public'):
 
     metadata, fields = metadata_factory(table.name)
     metadata['objects'][0].update(extended)
-    for col in table.columns:
-        api_name = col.name
-        display_name = col.name
+
+    columns = exclude_columns(table.columns, excludes)
+
+    for col in columns:
         fqname = '{}.{}'.format(table.name, col.name)
         field_meta = new_field(fqname, col.name)
         field_meta.update(metadata_for_dbtype(col.type))
@@ -115,11 +116,13 @@ def metadata_dict(dburl, table, extended=None, schema='public'):
     return metadata
 
 
-def data_generator(dburl, table, schema='public'):
+def data_generator(dburl, table, excludes=None, schema='public'):
     engine, table = db_connect_table(dburl, table, schema=schema)
 
-    yield [c.name for c in table.columns]
+    columns = exclude_columns(table.columns, excludes)
+
+    yield [c.name for c in columns]
     with scoped_session(engine) as session:
-        query = session.query(table).yield_per(1000)
+        query = session.query(*columns).yield_per(1000)
         for row in query:
             yield row

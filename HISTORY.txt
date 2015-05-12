@@ -1,0 +1,21 @@
+0.7.0 (2015-05-12)
+----------------------
+- improved metadata generation
+ - UUID, ENUM support added
+ - floats now set scale/precision accurately
+ - unhanded types default to TEXT rather than raise an error
+- bugfix, dates in generated CSV no longer break SFDC parser
+- reduced memory footprint on large tables
+- CLI --limit to limit number of rows extracted, useful for testing
+- CLI command chunk to generate files as uploaded to SFDC
+- CLI supports multiple schemas
+- API exclude_columns from upload
+
+Full changes https://github.com/heroku/pyAnalyticsCloud/compare/v0.1.0...v0.7.0
+
+Thanks Jeremy West and Jeff Vagg for contributing to this release
+
+
+0.1.0 (2014-10-17)
+----------------------
+ - initial release

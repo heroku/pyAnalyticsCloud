@@ -2,9 +2,9 @@
 [![TravisCI](https://travis-ci.org/heroku/pyAnalyticsCloud.png?branch=master)](https://travis-ci.org/heroku/pyAnalyticsCloud)
 [![PyPi](https://pypip.in/d/pyAnalyticsCloud/badge.png)](https://pypi.python.org/pypi/pyAnalyticsCloud)
 
-Salesforce.com Analytics Cloud Loader
+Salesforce.com Wave Data Loader
 ======================================
-Tools to help load data into Salesforce.com Analytics Cloud
+Tools to help load data into Salesforce.com Wave
 
 Usage
 --------
@@ -16,7 +16,7 @@ First, you will need to set your SFDC credencials via environment variables::
 
 More information about getting your [Security Token](https://help.salesforce.com/apex/HTViewHelpDoc?id=user_security_token.htm)
 
-The quickest way to get started is to load an entire table into SFDC Analytics, Insights
+The quickest way to get started is to load an entire table into Salesforce Wave
 
     pyac-table postgres://username:password@db.example.com/database table_name
 

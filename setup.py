@@ -42,7 +42,7 @@ setup(
     include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
-    keywords='salesforce, heroku, insights',
+    keywords='salesforce, heroku, insights, wave',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

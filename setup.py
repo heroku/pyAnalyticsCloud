@@ -7,15 +7,20 @@ try:
 except ImportError:
     from distutils.core import setup
 
+import sys
 
 README = ''.join(open('README.md').readlines()[4:])
 
 requirements = [
     'sqlalchemy',
-    'psycopg2',
     'unicodecsv',
     'salesforce-python-toolkit',
 ]
+
+if hasattr(sys, 'pypy_version_info'):
+    requirements.append('psycopg2cffi')
+else:
+    requirements.append('psycopg2')
 
 test_requirements = [
     # TODO: put package test requirements here

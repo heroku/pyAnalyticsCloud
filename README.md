@@ -1,4 +1,5 @@
-[![Travis](https://img.shields.io/travis/heroku/pyAnalyticsCloud)](https://travis-ci.org/heroku/pyAnalyticsCloud)[![PyPI](https://img.shields.io/pypi/implementation/pyAnalyticsCloud.svg)](https://pypi.python.org/pypi/pyAnalyticsCloud)
+[![Travis](https://img.shields.io/travis/heroku/pyAnalyticsCloud.svg)](https://travis-ci.org/heroku/pyAnalyticsCloud)
+[![PyPI](https://img.shields.io/pypi/implementation/pyAnalyticsCloud.svg)](https://pypi.python.org/pypi/pyAnalyticsCloud)
 [![PyPI](https://img.shields.io/pypi/pyversions/pyAnalyticsCloud.svg)](https://pypi.python.org/pypi/pyAnalyticsCloud)
 [![PyPI](https://img.shields.io/pypi/implementation/pyAnalyticsCloud.svg)](https://pypi.python.org/pypi/pyAnalyticsCloud)
 [![GitHub license](https://img.shields.io/github/license/heroku/pyAnalyticsCloud.svg)](https://github.com/heroku/pyAnalyticsCloud)

@@ -1,5 +1,5 @@
 suds==0.3.9
-https://github.com/scottpersinger/salesforce-python-toolkit/archive/b0754d2ac32ad745ae8aec4f6a12d659fa2f9638.zip#egg=salesforce-python-toolkit==0.1.4
+https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/salesforce-python-toolkit/salesforce-python-toolkit-0.1.5.tar.gz
 SQLAlchemy==0.9.7
 psycopg2==2.5.4
 unicodecsv==0.9.4

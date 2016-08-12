@@ -1,3 +1,9 @@
+0.8.0 (in-progress)
+-------------------
+
+ - compatibility with newer unicodecsv
+ - compatibility wity pypy and psycopg2cffi
+
 0.7.0 (2015-05-12)
 ----------------------
 - improved metadata generation

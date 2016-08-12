@@ -28,7 +28,7 @@ test_requirements = [
 
 setup(
     name='pyAnalyticsCloud',
-    version='0.7.0',
+    version='0.8.0',
     description='Tools to help load data into Salesforce.com Analytics Cloud',
     long_description=README,
     author='Marc Sibson',

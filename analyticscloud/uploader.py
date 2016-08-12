@@ -1,4 +1,5 @@
 import csv
+import numbers
 import json
 import logging
 import os.path
@@ -19,7 +20,19 @@ def _stringify(s, encoding, errors):
     if isinstance(s, datetime):
         return s.strftime('%Y-%m-%d %H:%M:%S')
 
-    return unicodecsv._stringify(s, encoding, errors)
+    if s is None:
+        return ''
+
+    if isinstance(s, unicode):
+        return s.encode(encoding, errors)
+
+    if isinstance(s, numbers.Number):
+        return s  # let csv.QUOTE_NONNUMERIC do its thing.
+
+    if not isinstance(s, str):
+        s = str(s)
+
+    return s
 
 
 def _stringify_list(l, encoding, errors='strict'):
@@ -29,7 +42,7 @@ def _stringify_list(l, encoding, errors='strict'):
         raise csv.Error(str(e))
 
 
-class AnalyticsWriter(unicodecsv.UnicodeWriter):
+class AnalyticsWriter(unicodecsv.writer):
     def writerow(self, row):
         # override writerow so we can properly serialize dates
         return self.writer.writerow(_stringify_list(row, self.encoding, self.encoding_errors))

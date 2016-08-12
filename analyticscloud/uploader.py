@@ -22,12 +22,16 @@ def _stringify(s, encoding, errors):
 
     if s is None:
         return ''
+
     if isinstance(s, unicode):
         return s.encode(encoding, errors)
-    elif isinstance(s, numbers.Number):
-        pass  # let csv.QUOTE_NONNUMERIC do its thing.
-    elif not isinstance(s, str):
+
+    if isinstance(s, numbers.Number):
+        return s  # let csv.QUOTE_NONNUMERIC do its thing.
+
+    if not isinstance(s, str):
         s = str(s)
+
     return s
 
 

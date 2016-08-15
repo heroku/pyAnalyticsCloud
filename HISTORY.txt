@@ -1,10 +1,10 @@
 1.0.0 (unreleaseed)
-----------------------
+-------------------
 
 0.8.0 (2016-08-15)
-----------------------
- - work with pypy
- - work with updated UnicodeCSV
+-------------------
+ - compatibility with newer unicodecsv
+ - compatibility wity pypy and psycopg2cffi
 
 0.7.0 (2015-05-12)
 ----------------------

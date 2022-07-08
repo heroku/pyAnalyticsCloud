@@ -1,4 +1,4 @@
-suds==0.3.9
+suds==1.0.0
 https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/salesforce-python-toolkit/salesforce-python-toolkit-0.1.5.tar.gz
 SQLAlchemy==0.9.7
 psycopg2==2.5.4
